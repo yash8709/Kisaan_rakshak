@@ -62,7 +62,7 @@ const PestDetectionPage: React.FC = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
             <Navbar />
 
-            <main className="max-w-4xl mx-auto py-12 px-6">
+            <main className="max-w-4xl mx-auto pt-28 pb-12 px-6">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
                     {/* Header */}
                     <div className="bg-green-700 dark:bg-green-900 py-8 px-8 text-center sm:text-left">

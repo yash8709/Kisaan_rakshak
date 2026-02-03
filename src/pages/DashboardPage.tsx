@@ -25,7 +25,7 @@ const DashboardPage: React.FC = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
             <Navbar />
 
-            <main className="max-w-7xl mx-auto py-10 px-6">
+            <main className="max-w-7xl mx-auto pt-28 pb-10 px-6">
                 <h1 className="text-3xl font-bold mb-8">{t('dashboard.title')}</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
