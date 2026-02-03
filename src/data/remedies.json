@@ -1,0 +1,42 @@
+{
+    "beetle": {
+        "organic": "Neem Oil Spray (5ml/L water)",
+        "chemical": "Cypermethrin 10EC",
+        "precaution": "Spray during early morning or late evening to avoid dusting bees."
+    },
+    "caterpillar": {
+        "organic": "Bacillus thuringiensis (Bt) spray",
+        "chemical": "Chlorpyrifos 20EC",
+        "precaution": "Remove large larvae by hand if infestation is low."
+    },
+    "aphid": {
+        "organic": "Soap water solution (10ml liquid soap / 1L water)",
+        "chemical": "Imidacloprid 17.8 SL",
+        "precaution": "Avoid spraying on windy days."
+    },
+    "mite": {
+        "organic": "Sulphur Dusting",
+        "chemical": "Dicofol 18.5 EC",
+        "precaution": "Maintain proper irrigation to reduce mite population."
+    },
+    "weevil": {
+        "organic": "Neem Cake application in soil",
+        "chemical": "Carbofuran 3G",
+        "precaution": "Deep Ploughing in summer to kill pupae."
+    },
+    "slug": {
+        "organic": "Salt traps or crushed eggshells",
+        "chemical": "Metaldehyde pellets",
+        "precaution": "Keep field clean of debris."
+    },
+    "snail": {
+        "organic": "Salt traps or copper tape barriers",
+        "chemical": "Metaldehyde pellets",
+        "precaution": "Keep field clean of debris."
+    },
+    "locust": {
+        "organic": "Garlic spray",
+        "chemical": "Malathion 50 EC",
+        "precaution": "Monitor swarm movement warnings."
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "app": {
+        "title": "Kisaan Rakshak"
+    },
+    "nav": {
+        "home": "Home",
+        "detect": "Detect Pests",
+        "dashboard": "Dashboard"
+    },
+    "hero": {
+        "title": "Grow the Future with Sustainable Intelligence",
+        "description": "Empowering farmers with next-gen pest detection, real-time analytics, and expert remedies.",
+        "cta_start": "Get Started",
+        "cta_learn": "Learn More"
+    },
+    "detect": {
+        "upload_title": "Click to Upload Image",
+        "upload_desc": "Upload a crop image to identify potential threats.",
+        "analyzing": "Analyzing crop health...",
+        "result_pest": "Pest Detected!",
+        "result_healthy": "Crop seems Healthy",
+        "confidence": "Confidence Score",
+        "remedies": "Recommended Remedies"
+    },
+    "dashboard": {
+        "title": "Farm Analytics",
+        "no_data": "No scans recorded yet.",
+        "recent_scans": "Recent Activity"
+    }
+}

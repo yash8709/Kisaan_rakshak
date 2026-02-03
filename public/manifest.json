@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Kisaan Rakshak",
+  "name": "Kisaan Rakshak: AI Pest Detection",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#15803d",
+  "background_color": "#ffffff",
+  "description": "AI-Powered Crop Pest Detection System for Farmers"
 }

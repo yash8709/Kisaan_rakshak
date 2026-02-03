@@ -1,70 +1,62 @@
-# Getting Started with Create React App
+# 🌿 Kisaan Rakshak - Enterprise AI Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Kisaan Rakshak** is a production-grade AI platform empowering farmers with instant pest detection, multilingual support, and data-driven analytics.
 
-## Available Scripts
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
+![Tech](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Tailwind%20%7C%20TensorFlow-blue)
 
-In the project directory, you can run:
+## 🚀 Enterprise Features (Phase 2)
 
-### `npm start`
+- **🌍 Multilingual Support**: Fully localized in **English** and **Hindi** (हिंदी).
+- **🌗 Dark Mode**: System-wide dark theme optimized for low-light field conditions.
+- **🩺 Remedies Engine**: AI not only detects pests but suggests **Organic** & **Chemical** treatments.
+- **📊 Analytics Dashboard**: Tracks scan history and visualizes crop health trends over time.
+- **📱 PWA Ready**: Installable on mobile devices with offline capabilities.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Core**: React 19, TypeScript
+- **Styling**: Tailwind CSS (Dark Mode enabled)
+- **AI/ML**: TensorFlow.js (Client-side inference)
+- **State/Storage**: Context API, LocalStorage, IndexedDB
+- **Visualization**: Recharts
+- **Internationalization**: i18next
 
-### `npm test`
+## 📂 Project Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+src/
+├── components/       # UI Components (Navbar, Cards)
+├── pages/            # Landing, Detect, Dashboard
+├── services/         # aiService, historyService
+├── hooks/            # useDarkMode
+├── locales/          # Translation files (en.json, hi.json)
+├── data/             # Static data (remedies.json)
+└── types/            # TS Definitions
+```
 
-### `npm run build`
+## 🏗️ How to Run
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1.  **Install Dependencies**
+    ```bash
+    npm install --legacy-peer-deps
+    ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2.  **Start Development Server**
+    ```bash
+    npm start
+    ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3.  **Build for Production**
+    ```bash
+    npm run build
+    ```
 
-### `npm run eject`
+## 🔮 Future Roadmap
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Backend Integration**: Python/FastAPI for advanced model training.
+- **Geolocation**: Map pest outbreaks using GPS data.
+- **Community Forum**: Connect farmers with experts.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+**Empowering Agriculture with Technology.** 🌾
