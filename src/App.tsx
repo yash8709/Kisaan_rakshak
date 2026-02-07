@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LandingPage from './pages/LandingPage';
 import PestDetectionPage from './pages/PestDetectionPage';
 import DashboardPage from './pages/DashboardPage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import AuthPage from './pages/AuthPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './index.css';
 
@@ -23,8 +22,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/signup" element={<AuthPage />} />
           <Route
             path="/detect"
             element={

@@ -8,10 +8,10 @@ interface ButtonProps extends HTMLMotionProps<"button"> {
 }
 
 const Button: React.FC<ButtonProps> = ({ children, isLoading, variant = 'primary', className, ...props }) => {
-    const baseStyles = "w-full py-3 rounded-full font-bold flex items-center justify-center transition-all duration-300";
+    const baseStyles = "relative w-full py-3.5 rounded-full font-bold flex items-center justify-center transition-all duration-300 overflow-hidden group";
     const variants = {
-        primary: "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white shadow-lg hover:shadow-green-500/30",
-        outline: "border-2 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
+        primary: "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white shadow-lg shadow-green-500/25 hover:shadow-green-500/40 border border-transparent",
+        outline: "border-2 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 backdrop-blur-sm"
     };
 
     return (
@@ -22,7 +22,14 @@ const Button: React.FC<ButtonProps> = ({ children, isLoading, variant = 'primary
             disabled={isLoading || props.disabled}
             {...props}
         >
-            {isLoading ? <Loader2 className="animate-spin mr-2" /> : children}
+            {/* Shimmer Effect */}
+            {variant === 'primary' && (
+                <div className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
+            )}
+
+            <span className="relative z-20 flex items-center">
+                {isLoading ? <Loader2 className="animate-spin mr-2" /> : <>{children}</>}
+            </span>
         </motion.button>
     );
 };

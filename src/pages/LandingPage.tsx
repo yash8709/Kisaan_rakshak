@@ -26,11 +26,12 @@ const LandingPage: React.FC = () => {
                 <Navbar />
 
                 {/* Hero Section */}
-                <section ref={targetRef} className="relative h-screen flex items-center justify-center overflow-hidden">
-                    {/* Parallax Background */}
+                <section ref={targetRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+                    {/* Abstract Gradient Mesh Background */}
                     <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
-
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/90 via-green-700/80 to-teal-900/90 dark:from-green-900/40 dark:via-emerald-900/60 dark:to-black/80"></div>
+                        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-agri-green/20 blur-[120px] animate-pulse-slow" />
+                        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-600/10 blur-[120px] animate-pulse-slow delay-1000" />
+                        <div className="absolute top-[20%] right-[20%] w-[30%] h-[30%] rounded-full bg-teal-500/10 blur-[100px] animate-float" />
                     </motion.div>
 
                     <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
@@ -41,24 +42,24 @@ const LandingPage: React.FC = () => {
                         >
                             <motion.span
                                 variants={fadeInUp}
-                                className="inline-block py-2 px-4 rounded-full bg-green-500/20 border border-green-400/30 text-green-300 text-sm font-bold mb-6 backdrop-blur-md uppercase tracking-wider"
+                                className="inline-block py-2 px-5 rounded-full bg-agri-green/10 border border-agri-green/20 text-agri-desc dark:text-agri-neon text-sm font-bold mb-8 backdrop-blur-md uppercase tracking-widest"
                             >
                                 AI-Powered Agriculture
                             </motion.span>
 
                             <motion.h1
                                 variants={fadeInUp}
-                                className="text-6xl md:text-8xl font-display font-extrabold text-white mb-8 tracking-tight leading-tight drop-shadow-lg"
+                                className="text-6xl md:text-8xl font-display font-extrabold text-text-primary dark:text-white mb-8 tracking-tight leading-[1.1]"
                             >
                                 Grow the Future with <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-100 via-white to-green-200 dark:from-green-400 dark:via-emerald-300 dark:to-green-500 animate-pulse-slow">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-agri-green to-teal-500 animate-gradient-x">
                                     Sustainable Intelligence
                                 </span>
                             </motion.h1>
 
                             <motion.p
                                 variants={fadeInUp}
-                                className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto mb-12 font-light leading-relaxed drop-shadow-md"
+                                className="text-xl md:text-2xl text-text-secondary dark:text-gray-300 max-w-3xl mx-auto mb-12 font-light leading-relaxed"
                             >
                                 Empowering farmers with next-gen pest detection, real-time analytics, and expert remedies.
                             </motion.p>
@@ -69,19 +70,19 @@ const LandingPage: React.FC = () => {
                             >
                                 <Link to="/detect">
                                     <motion.button
-                                        whileHover={hoverScale}
+                                        whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-green-500 hover:bg-green-400 text-white px-10 py-5 rounded-full font-bold text-lg shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] hover:shadow-neon transition-all flex items-center gap-3 group"
+                                        className="bg-gradient-to-r from-agri-green to-emerald-600 text-white px-10 py-4 rounded-full font-bold text-lg shadow-neon hover:shadow-glow transition-all flex items-center gap-3 group"
                                     >
                                         Get Started <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                     </motion.button>
                                 </Link>
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
-                                    className="flex items-center gap-3 text-white font-semibold group px-8 py-5 rounded-full hover:bg-white/10 transition-colors"
+                                    className="flex items-center gap-3 text-text-primary dark:text-white font-semibold group px-8 py-4 rounded-full hover:bg-surface-subtle dark:hover:bg-white/5 transition-colors border border-surface-subtle dark:border-white/10"
                                 >
-                                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition backdrop-blur-sm">
-                                        <PlayCircle size={24} />
+                                    <div className="w-10 h-10 rounded-full bg-agri-green/10 flex items-center justify-center text-agri-green group-hover:bg-agri-green group-hover:text-white transition-all">
+                                        <PlayCircle size={20} />
                                     </div>
                                     <span>Watch Demo</span>
                                 </motion.button>
@@ -102,7 +103,7 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Features Section */}
-                <section id="features" className="py-32 relative bg-surface-light dark:bg-agri-dark">
+                <section id="features" className="py-32 relative bg-surface-subtle/30 dark:bg-surface-dark">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-32">
                             <motion.div

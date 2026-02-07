@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from '../firebase';
-import { onAuthStateChanged, User, signOut } from 'firebase/auth';
+import { onAuthStateChanged, User, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface AuthContextType {
     currentUser: User | null;
     loading: boolean;
-    login: () => Promise<void>;
+    login: () => Promise<void>; // Retaining mock login for compatibility if needed
+    loginWithEmail: (email: string, password: string) => Promise<void>;
+    signup: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
 }
 
@@ -29,11 +31,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return unsubscribe;
     }, []);
 
+    // Original Mock Login (kept for safety)
     const login = async () => {
-        // SIMULATION MODE
         setLoading(true);
         try {
-            // Simulate API delay
             await new Promise(resolve => setTimeout(resolve, 800));
             const mockUser: any = {
                 uid: "simulated-user-123",
@@ -50,16 +51,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    // const login = (e,p) => signInWithEmailAndPassword(auth, e, p); // Real impl stored for later
+    // Real Firebase Login
+    const loginWithEmail = async (email: string, password: string) => {
+        await signInWithEmailAndPassword(auth, email, password);
+    };
+
+    // Real Firebase Signup
+    const signup = async (email: string, password: string) => {
+        await createUserWithEmailAndPassword(auth, email, password);
+    };
+
     const logout = async () => {
+        await signOut(auth);
         setCurrentUser(null);
-        await signOut(auth); // Try real signout just in case
     };
 
     const value = {
         currentUser,
         loading,
-        login, // Expose login function
+        login,
+        loginWithEmail,
+        signup,
         logout
     };
 

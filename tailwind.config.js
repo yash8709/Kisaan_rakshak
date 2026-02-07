@@ -21,7 +21,15 @@ module.exports = {
                 },
                 surface: {
                     light: '#ffffff',
-                    dark: '#111827',
+                    dark: '#0f172a', // Slate-900 for better contrast
+                    subtle: '#f1f5f9', // Slate-100
+                    'dark-subtle': '#1e293b', // Slate-800
+                },
+                text: {
+                    primary: '#0f172a', // Slate-900
+                    secondary: '#475569', // Slate-600
+                    'dark-primary': '#f8fafc', // Slate-50
+                    'dark-secondary': '#94a3b8', // Slate-400
                 }
             },
             fontFamily: {
@@ -30,9 +38,10 @@ module.exports = {
             },
             boxShadow: {
                 'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
-                'neon': '0 0 20px rgba(16, 185, 129, 0.5)',
-                'card': '0 10px 30px -10px rgba(0, 0, 0, 0.1)',
-                'card-hover': '0 20px 40px -10px rgba(0, 0, 0, 0.2)',
+                'neon': '0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(16, 185, 129, 0.2)',
+                'card': '0 2px 8px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.04)',
+                'card-hover': '0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(0, 0, 0, 0.08)',
+                'glow': '0 0 20px rgba(16, 185, 129, 0.3)',
             },
             animation: {
                 'fade-in-down': 'fadeInDown 0.8s ease-out',
@@ -40,6 +49,7 @@ module.exports = {
                 'slow-spin': 'spin 3s linear infinite',
                 'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                 'float': 'float 6s ease-in-out infinite',
+                'shimmer': 'shimmer 2s linear infinite',
             },
             keyframes: {
                 fadeInDown: {
@@ -55,7 +65,8 @@ module.exports = {
                     '50%': { transform: 'translateY(-10px)' },
                 },
                 shimmer: {
-                    '100%': { transform: 'translateX(100%)' },
+                    '0%': { backgroundPosition: '-200% 0' },
+                    '100%': { backgroundPosition: '200% 0' },
                 }
             },
             backdropBlur: {
