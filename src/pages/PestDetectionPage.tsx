@@ -3,21 +3,24 @@ import Navbar from '../components/Navbar';
 import { useTranslation } from 'react-i18next';
 import { detectPest, PredictionResult } from '../services/aiService';
 import { saveScan } from '../services/historyService';
-import remediesData from '../data/remedies.json';
 import { Camera, RefreshCw, CheckCircle, AlertTriangle, ChevronRight } from 'lucide-react';
+import WeatherWidget from '../components/weather/WeatherWidget';
+import { getRemedy, CropStage, RemedyResult } from '../services/remedyEngine';
+import { getWeatherData, WeatherData } from '../services/weatherService';
 
 const PestDetectionPage: React.FC = () => {
     const { t } = useTranslation();
     const [image, setImage] = useState<string | null>(null);
     const [prediction, setPrediction] = useState<PredictionResult | null>(null);
     const [loading, setLoading] = useState(false);
+    const [weather, setWeather] = useState<WeatherData | null>(null);
+    const [cropStage, setCropStage] = useState<CropStage>('vegetative');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Helper to get remedies safely
-    const getRemedies = (pestName: string) => {
-        const key = Object.keys(remediesData).find(k => pestName.toLowerCase().includes(k));
-        return key ? (remediesData as any)[key] : null;
-    };
+    // Fetch weather on mount
+    React.useEffect(() => {
+        getWeatherData().then(setWeather);
+    }, []);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -25,7 +28,7 @@ const PestDetectionPage: React.FC = () => {
             const imgUrl = URL.createObjectURL(file);
             setImage(imgUrl);
             setPrediction(null);
-
+            // Reset logic
             const imgElement = new Image();
             imgElement.src = imgUrl;
             imgElement.onload = () => runPrediction(imgElement, imgUrl);
@@ -39,7 +42,6 @@ const PestDetectionPage: React.FC = () => {
             const result = await detectPest(imgElement);
             setPrediction(result);
 
-            // Save to history
             saveScan({
                 imageUrl: imgUrl,
                 result: result.isPest ? `Pest: ${result.className}` : 'Healthy',
@@ -56,21 +58,47 @@ const PestDetectionPage: React.FC = () => {
     };
 
     const triggerFileInput = () => fileInputRef.current?.click();
-    const remedies = prediction?.isPest ? getRemedies(prediction.className) : null;
+
+    // Use the smart remedy engine
+    const remedies = prediction?.isPest ? getRemedy(prediction.className, weather, cropStage) : null;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+        <div className="min-h-screen bg-surface-subtle dark:bg-surface-dark text-gray-800 dark:text-gray-100 transition-colors duration-300">
             <Navbar />
 
             <main className="max-w-4xl mx-auto pt-28 pb-12 px-6">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
+                <div className="bg-white dark:bg-surface-dark-subtle rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
                     {/* Header */}
-                    <div className="bg-green-700 dark:bg-green-900 py-8 px-8 text-center sm:text-left">
-                        <h2 className="text-3xl font-bold text-white mb-2">{t('nav.detect')}</h2>
-                        <p className="text-green-100">{t('detect.upload_desc')}</p>
+                    <div className="bg-green-700 dark:bg-green-900 py-8 px-8 text-center sm:text-left relative overflow-hidden">
+                        <div className="relative z-10">
+                            <h2 className="text-3xl font-bold text-white mb-2">{t('nav.detect')}</h2>
+                            <p className="text-green-100 mb-6">{t('detect.upload_desc')}</p>
+
+                            {/* Weather Widget Integrated */}
+                            <div className="max-w-md mx-auto sm:mx-0 transform scale-95 origin-top-left">
+                                <WeatherWidget />
+                            </div>
+                        </div>
+                        {/* Decorative background elements if needed */}
                     </div>
 
                     <div className="p-8">
+                        {/* Crop Stage Selector - NEW FEATURE */}
+                        <div className="mb-8 flex items-center justify-center space-x-4 bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10">
+                            <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Crop Stage:</span>
+                            <select
+                                value={cropStage}
+                                onChange={(e) => setCropStage(e.target.value as CropStage)}
+                                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 font-medium focus:ring-2 focus:ring-green-500 outline-none"
+                            >
+                                <option value="seedling">Seedling</option>
+                                <option value="vegetative">Vegetative (Growth)</option>
+                                <option value="flowering">Flowering</option>
+                                <option value="fruiting">Fruiting</option>
+                                <option value="harvest">Harvest Ready</option>
+                            </select>
+                        </div>
+
                         {/* Upload Area */}
                         <div
                             className={`border-2 border-dashed rounded-2xl p-10 text-center transition cursor-pointer group
@@ -131,24 +159,38 @@ const PestDetectionPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/* Remedies Section */}
+                                {/* Remedies Section (Enhanced) */}
                                 {prediction.isPest && remedies && (
-                                    <div className="mt-8 bg-blue-50 dark:bg-blue-900/10 rounded-2xl p-8 border border-blue-100 dark:border-blue-900/30">
-                                        <h3 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-6 flex items-center gap-2">
-                                            <span>🩺</span> {t('detect.remedies')}
-                                        </h3>
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm">
-                                                <h4 className="font-semibold text-green-700 dark:text-green-400 mb-2">🌿 Organic Solution</h4>
-                                                <p className="text-sm">{remedies.organic}</p>
+                                    <div className="mt-8 space-y-6">
+
+                                        {/* Smart Advisory Banner */}
+                                        {remedies.weatherAdvisory && (
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800 flex items-start gap-3">
+                                                <span className="text-2xl">🌦️</span>
+                                                <div>
+                                                    <h4 className="font-bold text-blue-800 dark:text-blue-300">Weather Advisory</h4>
+                                                    <p className="text-sm text-blue-700 dark:text-blue-200">{remedies.weatherAdvisory}</p>
+                                                </div>
                                             </div>
-                                            <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm">
-                                                <h4 className="font-semibold text-red-700 dark:text-red-400 mb-2">🧪 Chemical Solution</h4>
-                                                <p className="text-sm">{remedies.chemical}</p>
-                                            </div>
-                                            <div className="md:col-span-2 bg-yellow-50 dark:bg-yellow-900/10 p-4 rounded-xl border border-yellow-200 dark:border-yellow-900/30">
-                                                <h4 className="font-semibold text-yellow-800 dark:text-yellow-500 mb-1">⚠️ Precaution</h4>
-                                                <p className="text-sm text-yellow-700 dark:text-yellow-600">{remedies.precaution}</p>
+                                        )}
+
+                                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-sm">
+                                            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                                <span>🩺</span> Recommended Treatment ({cropStage} stage)
+                                            </h3>
+                                            <div className="grid md:grid-cols-2 gap-6">
+                                                <div className="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-100 dark:border-green-900/20">
+                                                    <h4 className="font-semibold text-green-700 dark:text-green-400 mb-2">🌿 Organic Solution</h4>
+                                                    <p className="text-sm">{remedies.organic}</p>
+                                                </div>
+                                                <div className="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-100 dark:border-red-900/20">
+                                                    <h4 className="font-semibold text-red-700 dark:text-red-400 mb-2">🧪 Chemical Solution</h4>
+                                                    <p className="text-sm">{remedies.chemical}</p>
+                                                </div>
+                                                <div className="md:col-span-2 bg-yellow-50 dark:bg-yellow-900/10 p-4 rounded-xl border border-yellow-200 dark:border-yellow-900/30">
+                                                    <h4 className="font-semibold text-yellow-800 dark:text-yellow-500 mb-1">⚠️ Precaution</h4>
+                                                    <p className="text-sm text-yellow-700 dark:text-yellow-600">{remedies.precaution}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

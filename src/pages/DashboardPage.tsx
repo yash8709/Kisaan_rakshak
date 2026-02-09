@@ -4,12 +4,18 @@ import { getHistory, ScanRecord } from '../services/historyService';
 import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
-import { Scan, ShieldCheck, AlertTriangle, Activity, ChevronRight } from 'lucide-react';
+import { Scan, ShieldCheck, AlertTriangle, Activity, ChevronRight, Bug, Leaf, History } from 'lucide-react';
+import FeatureCard from '../components/ui/FeatureCard';
+import WeatherWidget from '../components/weather/WeatherWidget';
+import AnalyticsDashboard from '../components/analytics/AnalyticsDashboard';
+import { useAuth } from '../context/AuthContext'; // Assuming useAuth is in AuthContext
+
 import { fadeInUp, staggerContainer } from '../utils/motion';
 
 const DashboardPage: React.FC = () => {
     const { t } = useTranslation();
     const [history, setHistory] = useState<ScanRecord[]>([]);
+    const { currentUser } = useAuth();
 
     useEffect(() => {
         setHistory(getHistory());
@@ -35,7 +41,7 @@ const DashboardPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+        <div className="min-h-screen bg-surface-subtle dark:bg-surface-dark text-gray-800 dark:text-gray-100 transition-colors duration-300">
             <Navbar />
 
             {/* Main Content */}
@@ -57,69 +63,58 @@ const DashboardPage: React.FC = () => {
                     </div>
                 </motion.div>
 
-                {/* Stats Grid - Bento Style */}
-                <motion.div
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate="visible"
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-                >
-                    {[
-                        { title: t('dashboard.totalScans'), value: stats.totalScans, icon: Scan, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-                        { title: t('dashboard.healthy'), value: stats.healthy, icon: ShieldCheck, color: 'text-green-500', bg: 'bg-green-500/10' },
-                        { title: t('dashboard.infected'), value: stats.infected, icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10' },
-                        { title: t('dashboard.actions'), value: 12, icon: Activity, color: 'text-purple-500', bg: 'bg-purple-500/10' }
-                    ].map((stat, index) => (
-                        <motion.div
-                            key={index}
-                            variants={fadeInUp}
-                            whileHover={{ y: -5 }}
-                            className="bg-surface-light dark:bg-surface-dark-subtle p-6 rounded-3xl border border-surface-subtle dark:border-white/5 shadow-card hover:shadow-card-hover transition-all"
-                        >
-                            <div className="flex justify-between items-start mb-4">
-                                <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
-                                    <stat.icon size={24} />
-                                </div>
-                                <span className={`text-xs font-bold px-2 py-1 rounded-full ${stat.bg} ${stat.color}`}>
-                                    +5.2%
-                                </span>
-                            </div>
-                            <h3 className="text-3xl font-bold text-text-primary dark:text-white mb-1 font-display">{stat.value}</h3>
-                            <p className="text-sm text-text-secondary dark:text-gray-400 font-medium">{stat.title}</p>
-                        </motion.div>
-                    ))}
-                </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Scan History Chart */}
+
+                {/* Weather & Stats Section */}
+                <div className="flex flex-col lg:flex-row gap-6 mb-8">
+                    {/* ... Weather and Stats Grid ... */}
+                    <div className="w-full lg:w-1/3">
+                        <WeatherWidget />
+                    </div>
+
+                    {/* Stats Grid - Takes 2/3 width */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="bg-surface-light dark:bg-surface-dark-subtle p-8 rounded-[2rem] border border-surface-subtle dark:border-white/5 shadow-card"
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="visible"
+                        className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4"
                     >
-                        <h2 className="text-xl font-bold mb-6 text-text-primary dark:text-white font-display">Scan Activity</h2>
-                        <div className="h-80">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={data}>
-                                    <defs>
-                                        <linearGradient id="colorScans" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} vertical={false} />
-                                    <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', color: '#F3F4F6', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-                                        itemStyle={{ color: '#10b981' }}
-                                    />
-                                    <Area type="monotone" dataKey="scans" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorScans)" />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
+                        {[
+                            { title: t('dashboard.totalScans'), value: stats.totalScans, icon: Scan, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+                            { title: t('dashboard.healthy'), value: stats.healthy, icon: ShieldCheck, color: 'text-green-500', bg: 'bg-green-500/10' },
+                            { title: t('dashboard.infected'), value: stats.infected, icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10' },
+                            { title: t('dashboard.actions'), value: 12, icon: Activity, color: 'text-purple-500', bg: 'bg-purple-500/10' }
+                        ].map((stat, index) => (
+                            <motion.div
+                                key={index}
+                                variants={fadeInUp}
+                                whileHover={{ y: -5 }}
+                                className="bg-surface-light dark:bg-surface-dark-subtle p-6 rounded-3xl border border-surface-subtle dark:border-white/5 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between"
+                            >
+                                <div className="flex justify-between items-start mb-2">
+                                    <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
+                                        <stat.icon size={24} />
+                                    </div>
+                                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${stat.bg} ${stat.color}`}>
+                                        +5.2%
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 className="text-3xl font-bold text-text-primary dark:text-white mb-1 font-display">{stat.value}</h3>
+                                    <p className="text-sm text-text-secondary dark:text-gray-400 font-medium">{stat.title}</p>
+                                </div>
+                            </motion.div>
+                        ))}
                     </motion.div>
+                </div>
+
+                {/* Analytics Section */}
+                <div className="mb-8">
+                    <AnalyticsDashboard history={history} />
+                </div>
+
+                {/* Recent Scans List Container - Modified to full width since charts moved */}
+                <div className="grid grid-cols-1 gap-8">
 
                     {/* Recent Scans List */}
                     <motion.div

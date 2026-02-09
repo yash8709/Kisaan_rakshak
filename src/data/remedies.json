@@ -1,42 +1,103 @@
 {
     "beetle": {
-        "organic": "Neem Oil Spray (5ml/L water)",
-        "chemical": "Cypermethrin 10EC",
-        "precaution": "Spray during early morning or late evening to avoid dusting bees."
+        "default": {
+            "organic": "Neem Oil Spray (5ml/L water)",
+            "chemical": "Cypermethrin 10EC",
+            "precaution": "Spray during early morning or late evening to avoid dusting bees."
+        },
+        "stages": {
+            "seedling": {
+                "organic": "Hand picking and Neem oil",
+                "chemical": "Imidacloprid seed treatment"
+            },
+            "flowering": {
+                "organic": "Pheromone traps",
+                "chemical": "Avoid spraying! Use light traps."
+            }
+        },
+        "weather": {
+            "rain": "Rain expected. Use systemic insecticides instead of contact ones.",
+            "wind": "High winds. Do not spray to avoid drift."
+        }
     },
     "caterpillar": {
-        "organic": "Bacillus thuringiensis (Bt) spray",
-        "chemical": "Chlorpyrifos 20EC",
-        "precaution": "Remove large larvae by hand if infestation is low."
+        "default": {
+            "organic": "Bacillus thuringiensis (Bt) spray",
+            "chemical": "Chlorpyrifos 20EC",
+            "precaution": "Remove large larvae by hand if infestation is low."
+        },
+        "stages": {
+            "vegetative": {
+                "organic": "Bt Spray every 10 days",
+                "chemical": "Emamectin Benzoate"
+            },
+            "fruiting": {
+                "organic": "Neem based formulations",
+                "chemical": "Spinosad (safe for harvest)"
+            }
+        },
+        "weather": {
+            "rain": "Larvae may hide under leaves. Ensure underside spraying."
+        }
     },
     "aphid": {
-        "organic": "Soap water solution (10ml liquid soap / 1L water)",
-        "chemical": "Imidacloprid 17.8 SL",
-        "precaution": "Avoid spraying on windy days."
+        "default": {
+            "organic": "Soap water solution (10ml liquid soap / 1L water)",
+            "chemical": "Imidacloprid 17.8 SL",
+            "precaution": "Avoid spraying on windy days."
+        },
+        "stages": {
+            "seedling": {
+                "organic": "Yellow sticky traps",
+                "chemical": "Thiomethoxam"
+            }
+        },
+        "weather": {
+            "cloudy": "High humidity promotes aphid growth. Monitor closely."
+        }
     },
     "mite": {
-        "organic": "Sulphur Dusting",
-        "chemical": "Dicofol 18.5 EC",
-        "precaution": "Maintain proper irrigation to reduce mite population."
+        "default": {
+            "organic": "Sulphur Dusting",
+            "chemical": "Dicofol 18.5 EC",
+            "precaution": "Maintain proper irrigation to reduce mite population."
+        },
+        "weather": {
+            "dry": "Dry weather increases mite population. Irrigate field."
+        }
     },
     "weevil": {
-        "organic": "Neem Cake application in soil",
-        "chemical": "Carbofuran 3G",
-        "precaution": "Deep Ploughing in summer to kill pupae."
+        "default": {
+            "organic": "Neem Cake application in soil",
+            "chemical": "Carbofuran 3G",
+            "precaution": "Deep Ploughing in summer to kill pupae."
+        }
     },
     "slug": {
-        "organic": "Salt traps or crushed eggshells",
-        "chemical": "Metaldehyde pellets",
-        "precaution": "Keep field clean of debris."
+        "default": {
+            "organic": "Salt traps or crushed eggshells",
+            "chemical": "Metaldehyde pellets",
+            "precaution": "Keep field clean of debris."
+        },
+        "weather": {
+            "rain": "Slugs are active in rain. Apply bait in evening."
+        }
     },
     "snail": {
-        "organic": "Salt traps or copper tape barriers",
-        "chemical": "Metaldehyde pellets",
-        "precaution": "Keep field clean of debris."
+        "default": {
+            "organic": "Salt traps or copper tape barriers",
+            "chemical": "Metaldehyde pellets",
+            "precaution": "Keep field clean of debris."
+        }
     },
     "locust": {
-        "organic": "Garlic spray",
-        "chemical": "Malathion 50 EC",
-        "precaution": "Monitor swarm movement warnings."
+        "default": {
+            "organic": "Garlic spray",
+            "chemical": "Malathion 50 EC",
+            "precaution": "Monitor swarm movement warnings."
+        },
+        "weather": {
+            "wind": "Locusts travel with wind. Prepare smoke fires."
+        }
     }
 }

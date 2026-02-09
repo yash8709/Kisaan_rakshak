@@ -22,11 +22,11 @@ const LandingPage: React.FC = () => {
 
     return (
         <ReactLenis root>
-            <div className="min-h-screen bg-gray-50 dark:bg-agri-darker transition-colors duration-500 font-sans selection:bg-green-500 selection:text-white overflow-x-hidden">
+            <div className="min-h-screen bg-agri-cream dark:bg-agri-dark transition-colors duration-500 font-sans selection:bg-agri-green selection:text-white overflow-x-hidden">
                 <Navbar />
 
                 {/* Hero Section */}
-                <section ref={targetRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+                <section ref={targetRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-32">
                     {/* Abstract Gradient Mesh Background */}
                     <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
                         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-agri-green/20 blur-[120px] animate-pulse-slow" />
@@ -95,7 +95,7 @@ const LandingPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 2, duration: 1 }}
-                        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2"
+                        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
                     >
                         <span className="text-white/50 text-xs tracking-widest uppercase">Scroll</span>
                         <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1 h-12 rounded-full bg-gradient-to-b from-green-500 to-transparent"></motion.div>
@@ -103,7 +103,7 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Features Section */}
-                <section id="features" className="py-32 relative bg-surface-subtle/30 dark:bg-surface-dark">
+                <section id="features" className="py-32 relative bg-surface-subtle dark:bg-surface-dark transition-colors duration-500">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-32">
                             <motion.div

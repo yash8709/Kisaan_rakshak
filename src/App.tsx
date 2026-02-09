@@ -5,6 +5,8 @@ import PestDetectionPage from './pages/PestDetectionPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import VoiceAssistant from './components/voice/VoiceAssistant';
+import ExpertConnectPage from './pages/ExpertConnectPage';
 import './index.css';
 
 // Protected Route Component
@@ -20,6 +22,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <VoiceAssistant />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<AuthPage />} />
@@ -32,11 +35,21 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/connect"
+            element={
+              <ProtectedRoute>
+                <ExpertConnectPage />
               </ProtectedRoute>
             }
           />

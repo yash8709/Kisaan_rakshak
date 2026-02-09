@@ -8,28 +8,28 @@ module.exports = {
         extend: {
             colors: {
                 agri: {
-                    dark: '#022c22', // deep emerald
-                    darker: '#011c16',
-                    green: '#10b981',
-                    neon: '#34d399',
-                    leaf: '#059669',
+                    dark: '#0f2e1a', // Deep Forest (Primary Dark)
+                    darker: '#041b14', // Near Black (Footer/Contrast)
+                    green: '#10b981', // Action Green
+                    neon: '#34d399', // Highlights
+                    leaf: '#059669', // Mid-tone
                     glass: 'rgba(255, 255, 255, 0.1)',
-                    darkGlass: 'rgba(0, 0, 0, 0.3)',
-                    cream: '#f8fafc', // Premium Light background
-                    white: '#ffffff', // Card white
-                    'green-light': '#ecfdf5', // Light green accents
+                    darkGlass: 'rgba(6, 36, 26, 0.6)', // Green-tinted glass
+                    cream: '#f8fafc',
+                    white: '#ffffff',
+                    'green-light': '#ecfdf5',
                 },
                 surface: {
                     light: '#ffffff',
-                    dark: '#0f172a', // Slate-900 for better contrast
-                    subtle: '#f1f5f9', // Slate-100
-                    'dark-subtle': '#1e293b', // Slate-800
+                    dark: '#06241a', // Dark Emerald (Replaces Slate-900)
+                    subtle: '#f1f5f9',
+                    'dark-subtle': '#0b3d2e', // Rich Agri Green (Replaces Slate-800)
                 },
                 text: {
-                    primary: '#0f172a', // Slate-900
-                    secondary: '#475569', // Slate-600
-                    'dark-primary': '#f8fafc', // Slate-50
-                    'dark-secondary': '#94a3b8', // Slate-400
+                    primary: '#06241a', // Dark Emerald text for light mode
+                    secondary: '#334155', // Slate-700
+                    'dark-primary': '#f0fdf4', // Green-tinted white
+                    'dark-secondary': '#a7f3d0', // Soft green text
                 }
             },
             fontFamily: {

@@ -54,7 +54,8 @@ const Navbar: React.FC = () => {
         { name: t('nav.home'), path: '/' },
         ...(currentUser ? [
             { name: t('nav.detect'), path: '/detect' },
-            { name: t('nav.dashboard'), path: '/dashboard' }
+            { name: t('nav.dashboard'), path: '/dashboard' },
+            { name: 'Experts', path: '/connect' }
         ] : [])
     ];
 
