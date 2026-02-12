@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    // Kisaan Rakshak Theme Configuration
     content: [
         "./src/**/*.{js,jsx,ts,tsx}",
     ],

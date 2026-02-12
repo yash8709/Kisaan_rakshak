@@ -20,14 +20,11 @@ root.render(
 reportWebVitals(console.log);
 
 // Service Worker Registration for PWA Offline Mode
+// CHANGED: Unregistering to fix stale cache issues for now
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      })
-      .catch((err) => {
-        console.log('ServiceWorker registration failed: ', err);
-      });
+  navigator.serviceWorker.ready.then((registration) => {
+    registration.unregister();
+  }).catch((error) => {
+    console.error(error.message);
   });
 }
