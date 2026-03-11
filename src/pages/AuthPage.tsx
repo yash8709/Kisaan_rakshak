@@ -4,9 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AuthInput from '../components/auth/AuthInput';
 import { Mail, Lock, User, ArrowRight, Loader } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
 
 const AuthPage: React.FC = () => {
-    const { loginWithEmail, signup, login } = useAuth(); // Destructure mock login here
+    const { loginWithEmail, loginWithGoogle, signup, login } = useAuth(); // Destructure mock login here
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -34,20 +35,10 @@ const AuthPage: React.FC = () => {
 
         try {
             if (isSignUpMode) {
-                await signup(email, password);
-                // In a real app, you'd update profile with 'name' here
+                await signup(email, password, name);
             } else {
-                try {
-                    // Try real Firebase login first
-                    await loginWithEmail(email, password);
-                } catch (firebaseError) {
-                    // If real login fails, attempt mock login (for demo/fake accounts)
-                    // This is a safety fallback for the user's specific request
-                    console.warn("Firebase login failed, using mock login fallback.");
-                    await login();
-                }
+                await loginWithEmail(email, password);
             }
-            navigate('/dashboard');
             navigate('/dashboard');
         } catch (err: any) {
             console.error(err);
@@ -56,6 +47,20 @@ const AuthPage: React.FC = () => {
             else if (err.code === 'auth/email-already-in-use') setError('Email is already registered.');
             else if (err.code === 'auth/weak-password') setError('Password should be at least 6 characters.');
             else setError('Authentication failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            await loginWithGoogle();
+            navigate('/dashboard');
+        } catch (err: any) {
+            console.error(err);
+            setError('Google sign-in failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -113,13 +118,32 @@ const AuthPage: React.FC = () => {
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="mt-8 w-full bg-agri-green text-white py-4 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/40 transition-all flex items-center justify-center gap-2 group"
+                            className="mt-6 w-full bg-agri-green text-white py-4 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/40 transition-all flex items-center justify-center gap-2 group"
                             disabled={loading}
                         >
                             {loading ? <Loader className="animate-spin" /> : <>Sign In <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></>}
                         </motion.button>
 
-                        <p className="mt-8 text-center text-sm md:hidden text-text-secondary dark:text-gray-400">
+                        <div className="mt-4 flex items-center">
+                            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">Or sign in with</span>
+                            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                        </div>
+
+                        <motion.button
+                            type="button"
+                            onClick={handleGoogleSignIn}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="mt-4 w-full bg-white dark:bg-gray-800 text-text-primary dark:text-white border border-gray-200 dark:border-gray-700 py-3 rounded-xl font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-3"
+                            disabled={loading}
+                        >
+                            {/* @ts-ignore */}
+                            <FcGoogle size={24} />
+                            Google
+                        </motion.button>
+
+                        <p className="mt-6 text-center text-sm md:hidden text-text-secondary dark:text-gray-400">
                             New here? <button type="button" onClick={toggleMode} className="text-agri-green font-bold ml-1">Create Account</button>
                         </p>
                     </form>
@@ -161,13 +185,32 @@ const AuthPage: React.FC = () => {
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="mt-8 w-full bg-agri-green text-white py-4 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/40 transition-all flex items-center justify-center gap-2 group"
+                            className="mt-6 w-full bg-agri-green text-white py-4 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:shadow-green-500/40 transition-all flex items-center justify-center gap-2 group"
                             disabled={loading}
                         >
                             {loading ? <Loader className="animate-spin" /> : <>Sign Up <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></>}
                         </motion.button>
 
-                        <p className="mt-8 text-center text-sm md:hidden text-text-secondary dark:text-gray-400">
+                        <div className="mt-4 flex items-center">
+                            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">Or sign up with</span>
+                            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                        </div>
+
+                        <motion.button
+                            type="button"
+                            onClick={handleGoogleSignIn}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="mt-4 w-full bg-white dark:bg-gray-800 text-text-primary dark:text-white border border-gray-200 dark:border-gray-700 py-3 rounded-xl font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-3"
+                            disabled={loading}
+                        >
+                            {/* @ts-ignore */}
+                            <FcGoogle size={24} />
+                            Google
+                        </motion.button>
+
+                        <p className="mt-6 text-center text-sm md:hidden text-text-secondary dark:text-gray-400">
                             Already joined? <button type="button" onClick={toggleMode} className="text-agri-green font-bold ml-1">Login</button>
                         </p>
                     </form>

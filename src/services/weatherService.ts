@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_KEY = 'YOUR_OPENWEATHER_API_KEY'; // User to replace this
+const API_KEY = process.env.REACT_APP_WEATHER_API_KEY || '';
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
 export interface WeatherData {
@@ -36,15 +36,26 @@ export const getWeatherData = async (city?: string): Promise<WeatherData> => {
             url = `${BASE_URL}?q=${city}&appid=${API_KEY}&units=metric`;
         } else {
             // 1. Get Coordinates if no city provided
-            const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject);
-            });
-            const { latitude, longitude } = position.coords;
-            url = `${BASE_URL}?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`;
+            try {
+                const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject(new Error("Geolocation not supported"));
+                        return;
+                    }
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                });
+                const { latitude, longitude } = position.coords;
+                url = `${BASE_URL}?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`;
+            } catch (geoError) {
+                console.warn("Geolocation failed or denied. Using default location.", geoError);
+                // Fallback to New Delhi if location access is denied
+                const defaultCity = "New Delhi";
+                url = `${BASE_URL}?q=${defaultCity}&appid=${API_KEY}&units=metric`;
+            }
         }
 
         // 2. Try Real API Call (Will fail without valid key, so we catch and return mock)
-        if (API_KEY === 'YOUR_OPENWEATHER_API_KEY') {
+        if (!API_KEY || API_KEY === 'YOUR_WEATHER_API_KEY_HERE') {
             console.warn('Weather Service: No API Key provided. Using Mock Data.');
             // Return varied mock data based on input to simulate search
             if (city) {
@@ -75,8 +86,7 @@ export const getWeatherData = async (city?: string): Promise<WeatherData> => {
 
     } catch (error) {
         console.error('Weather Service Error:', error);
-        // Fallback to mock data to ensure UI doesn't break
-        return MOCK_WEATHER;
+        throw error; // Propagate error to UI for handling
     }
 };
 

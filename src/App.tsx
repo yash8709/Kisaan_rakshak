@@ -9,6 +9,8 @@ import ExpertConnectPage from './pages/ExpertConnectPage';
 import './index.css';
 
 import ChatWindow from './assistant/components/ChatWindow';
+import { AIProvider } from './assistant/context/AIContext';
+import PublicRoute from './components/auth/PublicRoute';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -24,40 +26,56 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <ChatWindow /> {/* Global Assistant Overlay */}
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<AuthPage />} />
-          <Route path="/signup" element={<AuthPage />} />
-          <Route
-            path="/detect"
-            element={
-              <ProtectedRoute>
-                <PestDetectionPage />
-              </ProtectedRoute>
-            }
-          />
+      <AIProvider>
+        <Router>
+          <ChatWindow /> {/* Global Assistant Overlay */}
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <AuthPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicRoute>
+                  <AuthPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/detect"
+              element={
+                <ProtectedRoute>
+                  <PestDetectionPage />
+                </ProtectedRoute>
+              }
+            />
 
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/connect"
-            element={
-              <ProtectedRoute>
-                <ExpertConnectPage />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/connect"
+              element={
+                <ProtectedRoute>
+                  <ExpertConnectPage />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Router>
+      </AIProvider>
     </AuthProvider>
   );
 }

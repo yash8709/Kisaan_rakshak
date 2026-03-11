@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ChatMessage, AssistantState } from '../types/assistant.types';
 import { generateGeminiResponse } from '../services/geminiService';
+import { useAIContext } from '../context/AIContext';
 
 // Persistent storage key
 const STORAGE_KEY = 'kisaan_assistant_chat';
 
 export const useAssistant = () => {
+    const aiContext = useAIContext();
     const [state, setState] = useState<AssistantState>(() => {
         // Load from local storage on init (DISABLED TEMPORARILY PER USER REQUEST)
         // const saved = localStorage.getItem(STORAGE_KEY);
@@ -56,8 +58,8 @@ export const useAssistant = () => {
         }
 
         try {
-            // Minimal prompt flow: No context injection
-            const responseText = await generateGeminiResponse(text);
+            // Pass context to the AI service
+            const responseText = await generateGeminiResponse(text, aiContext);
             addMessage(responseText, 'assistant');
         } catch (err: any) {
             const errorMessage = "AI service temporarily unavailable.";

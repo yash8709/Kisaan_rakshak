@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
 import { detectPest, PredictionResult } from '../services/aiService';
 import { saveScan } from '../services/historyService';
 import { Camera, RefreshCw, CheckCircle, AlertTriangle, ChevronRight } from 'lucide-react';
 import WeatherWidget from '../components/weather/WeatherWidget';
 import { getRemedy, CropStage, RemedyResult } from '../services/remedyEngine';
 import { getWeatherData, WeatherData } from '../services/weatherService';
+import { FileUpload } from '../components/ui/file-upload';
 
 const PestDetectionPage: React.FC = () => {
     const { t } = useTranslation();
@@ -15,15 +17,15 @@ const PestDetectionPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [weather, setWeather] = useState<WeatherData | null>(null);
     const [cropStage, setCropStage] = useState<CropStage>('vegetative');
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { currentUser } = useAuth();
 
     // Fetch weather on mount
     React.useEffect(() => {
         getWeatherData().then(setWeather);
     }, []);
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
+    const handleFileUpload = (files: File[]) => {
+        const file = files?.[0];
         if (file) {
             const imgUrl = URL.createObjectURL(file);
             setImage(imgUrl);
@@ -42,12 +44,16 @@ const PestDetectionPage: React.FC = () => {
             const result = await detectPest(imgElement);
             setPrediction(result);
 
-            saveScan({
-                imageUrl: imgUrl,
-                result: result.isPest ? `Pest: ${result.className}` : 'Healthy',
-                confidence: result.probability,
-                isPest: result.isPest
-            });
+            // Crucially await history storage and ensure correct mapping
+            if (currentUser?.uid) {
+                console.log(`Saving scan to Firestore for UID: ${currentUser.uid}`);
+                await saveScan(currentUser.uid, {
+                    imageUrl: imgUrl,
+                    result: result.className, // Matches string interface
+                    confidence: result.probability,
+                    isPest: result.isPest
+                });
+            }
 
         } catch (error) {
             console.error("Prediction error:", error);
@@ -56,8 +62,6 @@ const PestDetectionPage: React.FC = () => {
             setLoading(false);
         }
     };
-
-    const triggerFileInput = () => fileInputRef.current?.click();
 
     // Use the smart remedy engine
     const remedies = prediction?.isPest ? getRemedy(prediction.className, weather, cropStage) : null;
@@ -75,7 +79,7 @@ const PestDetectionPage: React.FC = () => {
                             <p className="text-green-100 mb-6">{t('detect.upload_desc')}</p>
 
                             {/* Weather Widget Integrated */}
-                            <div className="max-w-md mx-auto sm:mx-0 transform scale-95 origin-top-left">
+                            <div className="w-full mt-8">
                                 <WeatherWidget />
                             </div>
                         </div>
@@ -100,21 +104,15 @@ const PestDetectionPage: React.FC = () => {
                         </div>
 
                         {/* Upload Area */}
-                        <div
-                            className={`border-2 border-dashed rounded-2xl p-10 text-center transition cursor-pointer group
-                                ${image ? 'border-gray-300 dark:border-gray-600' : 'border-green-500 bg-green-50 dark:bg-green-900/10 hover:bg-green-100 dark:hover:bg-green-900/20'}`}
-                            onClick={triggerFileInput}
-                        >
-                            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" ref={fileInputRef} />
-
-                            {!image ? (
-                                <div className="space-y-4">
-                                    <div className="bg-green-100 dark:bg-green-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto text-green-600 dark:text-green-200">
-                                        <Camera size={40} />
-                                    </div>
-                                    <p className="text-xl font-medium">{t('detect.upload_title')}</p>
-                                </div>
-                            ) : (
+                        {!image ? (
+                            <div className="w-full mx-auto min-h-64 border border-dashed border-green-500/30 dark:border-white/10 bg-white dark:bg-black/20 rounded-2xl overflow-hidden relative">
+                                <FileUpload onChange={handleFileUpload} />
+                            </div>
+                        ) : (
+                            <div
+                                className="border-2 border-dashed rounded-2xl p-10 text-center transition cursor-pointer group border-gray-300 dark:border-gray-600 relative"
+                                onClick={() => setImage(null)}
+                            >
                                 <div className="relative inline-block rounded-xl overflow-hidden shadow-md">
                                     <img src={image} alt="Crop" className="max-h-80 object-contain mx-auto" />
                                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
@@ -123,8 +121,9 @@ const PestDetectionPage: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-                            )}
-                        </div>
+                                <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Click to upload a different image</p>
+                            </div>
+                        )}
 
                         {/* Loading State */}
                         {loading && (

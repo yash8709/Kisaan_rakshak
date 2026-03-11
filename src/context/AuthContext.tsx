@@ -1,13 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../firebase';
-import { onAuthStateChanged, User, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db, googleProvider } from '../firebase';
+import { onAuthStateChanged, User, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+
+export interface UserProfile {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+    createdAt: string;
+}
 
 interface AuthContextType {
     currentUser: User | null;
     loading: boolean;
     login: () => Promise<void>; // Retaining mock login for compatibility if needed
     loginWithEmail: (email: string, password: string) => Promise<void>;
-    signup: (email: string, password: string) => Promise<void>;
+    loginWithGoogle: () => Promise<void>;
+    signup: (email: string, password: string, name: string) => Promise<void>;
     logout: () => Promise<void>;
 }
 
@@ -51,14 +61,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    // Helper to save user to Firestore
+    const saveUserToFirestore = async (user: User) => {
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            await setDoc(userRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                createdAt: new Date().toISOString()
+            });
+        }
+    };
+
     // Real Firebase Login
     const loginWithEmail = async (email: string, password: string) => {
         await signInWithEmailAndPassword(auth, email, password);
     };
 
+    // Real Firebase Google Login
+    const loginWithGoogle = async () => {
+        const result = await signInWithPopup(auth, googleProvider);
+        await saveUserToFirestore(result.user);
+    };
+
     // Real Firebase Signup
-    const signup = async (email: string, password: string) => {
-        await createUserWithEmailAndPassword(auth, email, password);
+    const signup = async (email: string, password: string, name: string) => {
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(result.user, { displayName: name });
+        await saveUserToFirestore(result.user);
     };
 
     const logout = async () => {
@@ -71,6 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         login,
         loginWithEmail,
+        loginWithGoogle,
         signup,
         logout
     };

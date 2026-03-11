@@ -25,6 +25,47 @@
     "dashboard": {
         "title": "Farm Analytics",
         "no_data": "No scans recorded yet.",
-        "recent_scans": "Recent Activity"
+        "recent_scans": "Recent Activity",
+        "weather": {
+            "search_placeholder": "Search city...",
+            "temp": "Temperature",
+            "humidity": "Humidity",
+            "wind": "Wind",
+            "pressure": "Pressure",
+            "visibility": "Visibility",
+            "analyzing": "Analyzing Farm Conditions...",
+            "advice_label": "Farming Tip"
+        },
+        "intelligence": {
+            "title": "Smart Farming Intelligence",
+            "soil_moisture": "Soil Moisture",
+            "pest_risk": "Pest Risk",
+            "crop_stress": "Crop Stress",
+            "spray_cond": "Spray Cond.",
+            "disease_risk": "Disease Risk",
+            "rain_impact": "Rain Impact Analysis",
+            "action_plan": "Farming Action Plan",
+            "levels": {
+                "LOW": "LOW",
+                "MEDIUM": "MEDIUM",
+                "HIGH": "HIGH",
+                "POOR": "POOR",
+                "MODERATE": "MODERATE",
+                "GOOD": "GOOD",
+                "NO_IMPACT": "NO IMPACT",
+                "LOW_IMPACT": "LOW IMPACT",
+                "MEDIUM_IMPACT": "MEDIUM IMPACT",
+                "HIGH_IMPACT": "HIGH IMPACT"
+            }
+        },
+        "analytics": {
+            "crop_health": "Crop Health Trends",
+            "yield_pred": "Yield Prediction",
+            "resource_eff": "Resource Efficiency",
+            "market_trends": "Market Trends",
+            "pending_actions": "Pending Actions",
+            "recent_detections": "Recent Detections",
+            "no_recent_activity": "No recent activity."
+        }
     }
 }

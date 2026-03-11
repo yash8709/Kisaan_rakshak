@@ -66,6 +66,7 @@ const ChatWindow: React.FC = () => {
                         initial={{ opacity: 0, y: 100, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
+                        onWheel={(e) => e.stopPropagation()}
                         className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-[90vw] md:w-[400px] h-[600px] max-h-[80vh] bg-surface-light dark:bg-surface-dark backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-subtle dark:border-white/10 z-50 flex flex-col overflow-hidden"
                     >
                         {/* Header */}
@@ -91,7 +92,7 @@ const ChatWindow: React.FC = () => {
                         </div>
 
                         {/* Messages Area */}
-                        <div className="flex-1 overflow-y-auto p-4 bg-surface-subtle/50 dark:bg-black/20">
+                        <div className="flex-1 overflow-y-auto overscroll-contain p-4 bg-surface-subtle/50 dark:bg-black/20" onWheel={(e) => e.stopPropagation()}>
                             {state.messages.map((msg) => (
                                 <MessageBubble key={msg.id} message={msg} />
                             ))}

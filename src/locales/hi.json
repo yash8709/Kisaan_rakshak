@@ -25,6 +25,47 @@
     "dashboard": {
         "title": "खेत विश्लेषण",
         "no_data": "कोई स्कैन रिकॉर्ड नहीं मिला।",
-        "recent_scans": "हाल की गतिविधि"
+        "recent_scans": "हाल की गतिविधि",
+        "weather": {
+            "search_placeholder": "शहर खोजें...",
+            "temp": "तापमान",
+            "humidity": "नमी",
+            "wind": "हवा",
+            "pressure": "दबाव",
+            "visibility": "दृश्यता",
+            "analyzing": "खेत की स्थितियों का विश्लेषण...",
+            "advice_label": "कृषि सुझाव"
+        },
+        "intelligence": {
+            "title": "स्मार्ट कृषि बुद्धिमत्ता",
+            "soil_moisture": "मिट्टी की नमी",
+            "pest_risk": "कीट जोखिम",
+            "crop_stress": "फसल तनाव",
+            "spray_cond": "छिड़काव स्थिति",
+            "disease_risk": "रोग जोखिम",
+            "rain_impact": "वर्षा प्रभाव विश्लेषण",
+            "action_plan": "कृषि कार्य योजना",
+            "levels": {
+                "LOW": "कम",
+                "MEDIUM": "मध्यम",
+                "HIGH": "उच्च",
+                "POOR": "खराब",
+                "MODERATE": "मध्यम",
+                "GOOD": "अच्छा",
+                "NO_IMPACT": "कोई प्रभाव नहीं",
+                "LOW_IMPACT": "कम प्रभाव",
+                "MEDIUM_IMPACT": "मध्यम प्रभाव",
+                "HIGH_IMPACT": "उच्च प्रभाव"
+            }
+        },
+        "analytics": {
+            "crop_health": "फसल स्वास्थ्य रुझान",
+            "yield_pred": "उपज भविष्यवाणी",
+            "resource_eff": "संसाधन दक्षता",
+            "market_trends": "बाजार रुझान",
+            "pending_actions": "लंबित कार्य",
+            "recent_detections": "हाल की कीट पहचान",
+            "no_recent_activity": "कोई हालिया गतिविधि नहीं।"
+        }
     }
 }

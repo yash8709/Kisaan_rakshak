@@ -1,11 +1,15 @@
 import { getHistory } from '../../services/historyService';
+import { auth } from '../../firebase';
 import { getWeatherData } from '../../services/weatherService';
 import { AssistantContext, ChatMessage } from '../types/assistant.types';
 
 export const buildContext = async (page: string, recentMessages: ChatMessage[]): Promise<AssistantContext> => {
     // 1. Get recent pest detection (if any)
-    const history = getHistory();
-    const lastScan = history.length > 0 ? history[0] : null;
+    let lastScan = null;
+    if (auth.currentUser?.uid) {
+        const history = await getHistory(auth.currentUser.uid);
+        lastScan = history.length > 0 ? history[0] : null;
+    }
 
     // 2. Get current weather
     // We try to get cached/current location weather. 

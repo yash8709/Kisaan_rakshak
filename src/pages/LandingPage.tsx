@@ -1,154 +1,217 @@
 import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import FeatureCard from '../components/ui/FeatureCard';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle, Shield, Smartphone, ArrowRight, PlayCircle } from 'lucide-react';
+import { CheckCircle, Shield, Smartphone } from 'lucide-react';
 import { ReactLenis } from '@studio-freight/react-lenis';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import farmerUsingPhone from '../assets/farmer-using-phone.jpg';
-import { fadeInUp, staggerContainer, slideInLeft, slideInRight, hoverScale } from '../utils/motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { staggerContainer, slideInLeft, slideInRight } from '../utils/motion';
+
+// New Enterprise Components
+import HeroSection from '../components/landing/HeroSection';
+import CropGrowthAnimation from '../components/landing/CropGrowthAnimation';
+import PestDetectionPreview from '../components/landing/PestDetectionPreview';
+import ParallaxContainer from '../components/landing/ParallaxContainer';
+import PestDetectionMarquee from '../components/landing/PestDetectionMarquee';
+
+// ─── Reusable scroll-reveal wrapper ───────────────────────────────────────────
+interface RevealProps {
+    children: React.ReactNode;
+    delay?: number;
+    direction?: 'up' | 'left' | 'right' | 'none';
+    className?: string;
+}
+
+const Reveal: React.FC<RevealProps> = ({
+    children,
+    delay = 0,
+    direction = 'up',
+    className = '',
+}) => {
+    const initial = {
+        opacity: 0,
+        y: direction === 'up' ? 40 : 0,
+        x: direction === 'left' ? -40 : direction === 'right' ? 40 : 0,
+    };
+
+    return (
+        <motion.div
+            initial={initial}
+            whileInView={{ opacity: 1, y: 0, x: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{
+                duration: 0.75,
+                delay,
+                ease: [0.22, 1, 0.36, 1],
+            }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+};
+
+// ─── Animated gradient line that draws itself in ──────────────────────────────
+const DrawLine: React.FC = () => (
+    <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+        style={{ originX: 0 }}
+        className="h-[1px] w-full bg-gradient-to-r from-emerald-500/40 via-teal-400/20 to-transparent mb-16"
+    />
+);
+
+// ─── Animated section badge ───────────────────────────────────────────────────
+const SectionBadge: React.FC<{ label: string; delay?: number }> = ({ label, delay = 0 }) => (
+    <Reveal delay={delay} direction="up">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-sm font-semibold mb-6 backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            {label}
+        </div>
+    </Reveal>
+);
 
 const LandingPage: React.FC = () => {
     const { t } = useTranslation();
-    const targetRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: targetRef,
-        offset: ["start start", "end start"]
-    });
 
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+    // Scroll-driven opacity for the demos section
+    const demoRef = useRef<HTMLElement>(null);
+    const { scrollYProgress: demoProgress } = useScroll({
+        target: demoRef,
+        offset: ['start end', 'end start'],
+    });
+    const demoOpacity = useTransform(demoProgress, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
 
     return (
-        <ReactLenis root>
-            <div className="min-h-screen bg-agri-cream dark:bg-agri-dark transition-colors duration-500 font-sans selection:bg-agri-green selection:text-white overflow-x-hidden">
+        <ReactLenis root options={{ lerp: 0.08, duration: 1.4, smoothWheel: true }}>
+            <div className="bg-surface-subtle dark:bg-slate-950 font-sans selection:bg-emerald-500 selection:text-white overflow-x-hidden min-h-screen transition-colors duration-300">
                 <Navbar />
 
-                {/* Hero Section */}
-                <section ref={targetRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-32">
-                    {/* Abstract Gradient Mesh Background */}
-                    <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
-                        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-agri-green/20 blur-[120px] animate-pulse-slow" />
-                        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-600/10 blur-[120px] animate-pulse-slow delay-1000" />
-                        <div className="absolute top-[20%] right-[20%] w-[30%] h-[30%] rounded-full bg-teal-500/10 blur-[100px] animate-float" />
-                    </motion.div>
+                {/* 1. Hero Section */}
+                <HeroSection />
 
-                    <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
-                        <motion.div
-                            variants={staggerContainer}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            <motion.span
-                                variants={fadeInUp}
-                                className="inline-block py-2 px-5 rounded-full bg-agri-green/10 border border-agri-green/20 text-agri-desc dark:text-agri-neon text-sm font-bold mb-8 backdrop-blur-md uppercase tracking-widest"
-                            >
-                                AI-Powered Agriculture
-                            </motion.span>
-
-                            <motion.h1
-                                variants={fadeInUp}
-                                className="text-6xl md:text-8xl font-display font-extrabold text-text-primary dark:text-white mb-8 tracking-tight leading-[1.1]"
-                            >
-                                Grow the Future with <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-agri-green to-teal-500 animate-gradient-x">
-                                    Sustainable Intelligence
-                                </span>
-                            </motion.h1>
-
-                            <motion.p
-                                variants={fadeInUp}
-                                className="text-xl md:text-2xl text-text-secondary dark:text-gray-300 max-w-3xl mx-auto mb-12 font-light leading-relaxed"
-                            >
-                                Empowering farmers with next-gen pest detection, real-time analytics, and expert remedies.
-                            </motion.p>
-
-                            <motion.div
-                                variants={fadeInUp}
-                                className="flex flex-col sm:flex-row justify-center items-center gap-6"
-                            >
-                                <Link to="/detect">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="bg-gradient-to-r from-agri-green to-emerald-600 text-white px-10 py-4 rounded-full font-bold text-lg shadow-neon hover:shadow-glow transition-all flex items-center gap-3 group"
-                                    >
-                                        Get Started <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                                    </motion.button>
-                                </Link>
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    className="flex items-center gap-3 text-text-primary dark:text-white font-semibold group px-8 py-4 rounded-full hover:bg-surface-subtle dark:hover:bg-white/5 transition-colors border border-surface-subtle dark:border-white/10"
-                                >
-                                    <div className="w-10 h-10 rounded-full bg-agri-green/10 flex items-center justify-center text-agri-green group-hover:bg-agri-green group-hover:text-white transition-all">
-                                        <PlayCircle size={20} />
-                                    </div>
-                                    <span>Watch Demo</span>
-                                </motion.button>
-                            </motion.div>
-                        </motion.div>
-                    </div>
-
-                    {/* Scroll Indicator */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 2, duration: 1 }}
-                        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
-                    >
-                        <span className="text-white/50 text-xs tracking-widest uppercase">Scroll</span>
-                        <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1 h-12 rounded-full bg-gradient-to-b from-green-500 to-transparent"></motion.div>
-                    </motion.div>
-                </section>
-
-                {/* Features Section */}
-                <section id="features" className="py-32 relative bg-surface-subtle dark:bg-surface-dark transition-colors duration-500">
+                {/* 2. Interactive Demonstrations Section */}
+                <motion.section
+                    ref={demoRef}
+                    style={{ opacity: demoOpacity }}
+                    className="py-24 lg:py-32 relative z-10 bg-white dark:bg-slate-950 border-t border-emerald-100 dark:border-slate-800 transition-colors duration-300"
+                >
                     <div className="max-w-7xl mx-auto px-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-32">
+                        <div className="text-center mb-16 lg:mb-24">
+                            <SectionBadge label="Vision Engine" delay={0} />
+
+                            <Reveal delay={0.1}>
+                                <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white mb-6 font-display">
+                                    Intelligent Farming,{' '}
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500 dark:from-emerald-400 dark:to-teal-400">
+                                        Visualized.
+                                    </span>
+                                </h2>
+                            </Reveal>
+
+                            <Reveal delay={0.2}>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">
+                                    Experience how our AI models track plant vitality and detect anomalies with unparalleled precision.
+                                </p>
+                            </Reveal>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                            <Reveal direction="left" delay={0.05}>
+                                <ParallaxContainer speed={0.1}>
+                                    <CropGrowthAnimation />
+                                </ParallaxContainer>
+                            </Reveal>
+
+                            <Reveal direction="right" delay={0.15}>
+                                <ParallaxContainer speed={0.15}>
+                                    <PestDetectionPreview />
+                                </ParallaxContainer>
+                            </Reveal>
+                        </div>
+                    </div>
+                </motion.section>
+
+                {/* Marquee */}
+                <Reveal direction="none">
+                    <PestDetectionMarquee />
+                </Reveal>
+
+                {/* 3. Features Section */}
+                <section
+                    id="features"
+                    className="py-24 lg:py-32 relative bg-surface-subtle dark:bg-slate-950 border-t border-emerald-100 dark:border-slate-800/50 transition-colors duration-300"
+                >
+                    <div className="max-w-7xl mx-auto px-6 relative z-10">
+
+                        <DrawLine />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-24">
+                            {/* Left — existing slideInLeft variant is preserved; Reveal wraps inner text */}
                             <motion.div
                                 variants={slideInLeft}
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true }}
                             >
-                                <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-8 font-display">
+                                <SectionBadge label="Our Technology" delay={0} />
+
+                                <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-8 font-display leading-[1.2]">
                                     Where technology meets <br />
-                                    <span className="text-green-500 underline decoration-wavy decoration-green-500/30 underline-offset-8">the roots of nature.</span>
+                                    <span className="text-emerald-600 dark:text-emerald-400 underline decoration-wavy decoration-emerald-500/30 underline-offset-[12px]">
+                                        the roots of nature.
+                                    </span>
                                 </h2>
-                                <p className="text-gray-600 dark:text-gray-400 text-xl leading-relaxed mb-10 border-l-4 border-green-500 pl-6">
-                                    Our platform combines cutting-edge computer vision with agronomy expertise to detect crop threats instantly. We verify every scan with 95%+ accuracy.
-                                </p>
+
+                                <Reveal delay={0.15}>
+                                    <p className="text-slate-600 dark:text-slate-400 text-xl leading-relaxed mb-10 border-l-2 border-emerald-500/50 pl-6 font-light">
+                                        Our platform combines cutting-edge computer vision with agronomy expertise to detect crop threats instantly. We verify every scan with 95%+ accuracy.
+                                    </p>
+                                </Reveal>
+
                                 <div className="grid grid-cols-2 gap-10">
-                                    <div>
-                                        <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-1">20k+</h3>
-                                        <p className="text-gray-500 font-medium tracking-wide text-sm uppercase">Scans Analyzed</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-1">100%</h3>
-                                        <p className="text-gray-500 font-medium tracking-wide text-sm uppercase">Free for Farmers</p>
-                                    </div>
+                                    {[
+                                        { value: '20k+', label: 'Scans Analyzed' },
+                                        { value: '100%', label: 'Free for Farmers' },
+                                    ].map((stat, i) => (
+                                        <Reveal key={stat.label} delay={0.2 + i * 0.1}>
+                                            <h3 className="text-5xl font-extrabold text-slate-900 dark:text-white mb-2 font-display">
+                                                {stat.value}
+                                            </h3>
+                                            <p className="text-emerald-600 dark:text-emerald-500 font-semibold tracking-wider text-xs uppercase">
+                                                {stat.label}
+                                            </p>
+                                        </Reveal>
+                                    ))}
                                 </div>
                             </motion.div>
 
+                            {/* Right — existing slideInRight is preserved */}
                             <motion.div
                                 variants={slideInRight}
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true }}
-                                className="relative group"
+                                className="relative group rounded-[2.5rem] p-1 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 dark:to-teal-900/40"
                             >
-                                <div className="absolute inset-0 bg-green-500/20 rounded-[2.5rem] rotate-6 transform group-hover:rotate-3 transition-transform duration-500 blur-xl"></div>
-                                <img
-                                    src={farmerUsingPhone}
-                                    alt="Farmer using phone"
-                                    className="rounded-[2.5rem] shadow-2xl z-10 relative border-4 border-white dark:border-white/10 transform transition-transform duration-500 group-hover:scale-[1.01]"
-                                />
-                                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-green-500/30 rounded-full blur-[80px] -z-0"></div>
+                                <div className="absolute inset-0 bg-emerald-500/10 rounded-[2.5rem] rotate-3 transform group-hover:rotate-6 transition-transform duration-700 blur-2xl" />
+                                <div className="bg-white dark:bg-[#040f0a] rounded-[2.4rem] overflow-hidden relative z-10 border border-emerald-500/20 shadow-[0_0_50px_rgba(4,15,10,0.1)] dark:shadow-[0_0_50px_rgba(4,15,10,0.8)]">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?q=80&w=800&auto=format&fit=crop"
+                                        alt="Farmer utilizing tech"
+                                        className="w-full h-auto transform transition-all duration-1000 group-hover:scale-110 opacity-90 dark:opacity-60 mix-blend-normal dark:mix-blend-luminosity dark:hover:mix-blend-normal hover:opacity-100"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 dark:from-[#040f0a] dark:via-[#040f0a]/40 to-transparent pointer-events-none" />
+                                </div>
                             </motion.div>
                         </div>
 
-                        {/* Feature Cards Grid */}
+                        {/* Feature Cards — staggerContainer is preserved */}
                         <motion.div
                             variants={staggerContainer}
                             initial="hidden"
@@ -157,42 +220,51 @@ const LandingPage: React.FC = () => {
                             className="grid grid-cols-1 md:grid-cols-3 gap-8"
                         >
                             <FeatureCard
-                                icon={<CheckCircle size={32} />}
+                                icon={<CheckCircle size={32} strokeWidth={1.5} />}
                                 title="Instant Detection"
                                 description="Upload a photo and get results in seconds. Our AI works offline for remote fields."
                                 index={0}
                             />
                             <FeatureCard
-                                icon={<Shield size={32} />}
+                                icon={<Shield size={32} strokeWidth={1.5} />}
                                 title="Expert Remedies"
                                 description="Get actionable advice on organic and chemical treatments to save your crop."
                                 index={1}
                             />
                             <FeatureCard
-                                icon={<Smartphone size={32} />}
+                                icon={<Smartphone size={32} strokeWidth={1.5} />}
                                 title="Analytics Dashboard"
                                 description="Track your farm's health over time with detailed charts and history logs."
                                 index={2}
                             />
                         </motion.div>
                     </div>
+
+                    {/* Background glows */}
+                    <div className="absolute top-1/2 left-0 w-[40vw] h-[40vw] bg-teal-500/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute bottom-0 right-0 w-[40vw] h-[40vw] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none translate-x-1/3 translate-y-1/3" />
                 </section>
 
-                {/* Footer */}
-                <footer className="bg-black/95 text-gray-400 py-16 border-t border-white/10 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-900 via-green-500 to-green-900 opacity-50"></div>
-                    <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center relative z-10">
-                        <div className="mb-8 md:mb-0">
-                            <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Kisaan Rakshak</h3>
-                            <p className="max-w-xs text-sm text-gray-500">Innovating agriculture for a sustainable future.</p>
+                {/* 4. Footer */}
+                <Reveal direction="up" delay={0.05}>
+                    <footer className="bg-white dark:bg-[#040f0a] text-slate-500 dark:text-slate-400 py-16 border-t border-emerald-100 dark:border-emerald-900/30 relative overflow-hidden transition-colors duration-300">
+                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+                        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center relative z-10">
+                            <div className="mb-8 md:mb-0">
+                                <h3 className="text-2xl font-display font-bold tracking-tight mb-2 flex items-center gap-2">
+                                    <span className="text-emerald-600 dark:text-emerald-500">Kisaan</span>
+                                    <span className="text-slate-900 dark:text-white">Rakshak</span>
+                                </h3>
+                                <p className="max-w-xs text-sm text-slate-500 font-light">Innovating agriculture for a sustainable future.</p>
+                            </div>
+                            <div className="flex gap-8 text-sm font-medium">
+                                <a href="#" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300">Privacy Policy</a>
+                                <a href="#" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300">Terms of Service</a>
+                                <a href="#" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300">Contact Us</a>
+                            </div>
                         </div>
-                        <div className="flex gap-8">
-                            <a href="#" className="hover:text-green-400 transition-colors duration-300">Privacy</a>
-                            <a href="#" className="hover:text-green-400 transition-colors duration-300">Terms</a>
-                            <a href="#" className="hover:text-green-400 transition-colors duration-300">Contact</a>
-                        </div>
-                    </div>
-                </footer>
+                    </footer>
+                </Reveal>
             </div>
         </ReactLenis>
     );

@@ -1,73 +1,92 @@
 import * as tf from "@tensorflow/tfjs";
-import * as mobilenet from "@tensorflow-models/mobilenet";
+import * as mobilenet from '@tensorflow-models/mobilenet';
 
-// Define a type for the prediction result
 export interface PredictionResult {
     className: string;
     probability: number;
     isPest: boolean;
 }
 
-// Keywords to identify potential pests in MobileNet classes
+let model: mobilenet.MobileNet | null = null;
+let isWarmingUp = false;
+
+// Keywords that indicate a physical threat or disease
 const PEST_KEYWORDS = [
-    "insect", "bug", "worm", "beetle", "fly", "aphid",
-    "weevil", "mite", "caterpillar", "slug", "snail",
-    "ant", "grasshopper", "cricket", "locust", "spider"
+    'insect', 'bug', 'grasshopper', 'caterpillar', 'beetle', 'weevil',
+    'aphid', 'worm', 'slug', 'snail', 'mite', 'locust', 'ant', 'fly',
+    'spider', 'moth', 'butterfly', 'wasp', 'bee', 'ladybug'
 ];
 
-let model: mobilenet.MobileNet | null = null;
+// Keywords indicating healthy plants/leaves to prevent false alarms
+const PLANT_KEYWORDS = ['plant', 'leaf', 'flower', 'tree', 'crop', 'vegetables', 'fruit', 'cabbage', 'lettuce', 'greenhouse', 'pot', 'daisy', 'grass'];
 
-/**
- * Loads the MobileNet model. Caches the model instance for subsequent calls.
- */
 export const loadModel = async (): Promise<mobilenet.MobileNet> => {
-    if (model) {
+    if (model) return model;
+
+    try {
+        await tf.setBackend('webgl');
+        await tf.ready();
+
+        console.log("Loading Pre-Migration MobileNet Classifier...");
+        model = await mobilenet.load({ version: 2, alpha: 1.0 });
+        console.log("Model loaded successfully.");
+
         return model;
+    } catch (error) {
+        console.error("Failed to load generic vision model:", error);
+        throw error;
     }
-    await tf.ready();
-    console.log("Loading MobileNet model...");
-    model = await mobilenet.load();
-    console.log("MobileNet model loaded.");
-    return model;
 };
 
-/**
- * Classifies an image and determines if it contains a pest.
- * @param imageElement HTMLImageElement to classify
- * @returns Promise<PredictionResult> The top prediction with pest detection flag.
- */
 export const detectPest = async (imageElement: HTMLImageElement): Promise<PredictionResult> => {
-    const loadedModel = await loadModel();
+    try {
+        const loadedModel = await loadModel();
 
-    // Classify the image
-    const predictions = await loadedModel.classify(imageElement);
+        // Analyze image using MobileNet ImageNet classes
+        const predictions = await loadedModel.classify(imageElement, 5);
+        predictions.sort((a, b) => b.probability - a.probability);
 
-    if (!predictions || predictions.length === 0) {
-        return { className: "Unknown", probability: 0, isPest: false };
-    }
+        console.log("ImageNet Output:", predictions);
 
-    // Check top predictions for pest keywords
-    // We look at the top 3 predictions to be safer
-    const topPredictions = predictions.slice(0, 3);
+        // 1. Check if the model strongly suspects an insect or bug
+        const pestPrediction = predictions.find(p =>
+            PEST_KEYWORDS.some(k => p.className.toLowerCase().includes(k))
+        );
 
-    // Find the first prediction that matches a pest keyword
-    const pestPrediction = topPredictions.find(p =>
-        PEST_KEYWORDS.some(keyword => p.className.toLowerCase().includes(keyword))
-    );
+        if (pestPrediction) {
+            return {
+                className: `Pest Detected: ${pestPrediction.className.split(',')[0]}`,
+                probability: pestPrediction.probability,
+                isPest: true
+            };
+        }
 
-    if (pestPrediction) {
+        // 2. Check if the model recognizes a general plant/crop
+        const plantPrediction = predictions.find(p =>
+            PLANT_KEYWORDS.some(k => p.className.toLowerCase().includes(k))
+        );
+
+        if (plantPrediction) {
+            return {
+                className: "Crop seems Healthy",
+                probability: plantPrediction.probability,
+                isPest: false
+            };
+        }
+
+        // 3. Unrecognized general object (e.g. human hands, random background)
         return {
-            className: pestPrediction.className,
-            probability: pestPrediction.probability,
-            isPest: true
+            className: `Recognized: ${predictions[0].className.split(',')[0]} (No threats found)`,
+            probability: predictions[0].probability,
+            isPest: false
+        };
+
+    } catch (error: any) {
+        console.error("Error during prediction:", error);
+        return {
+            className: "Analysis Failed",
+            probability: 0.0,
+            isPest: false
         };
     }
-
-    // If no pest found, return the top prediction (likely the plant or generic object)
-    // We assume it's healthy if no pest is detected
-    return {
-        className: predictions[0].className,
-        probability: predictions[0].probability,
-        isPest: false
-    };
 };

@@ -1,6 +1,9 @@
-// Basic interface for a scan record
+import { collection, addDoc, getDocs, query, where, orderBy, limit, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+
 export interface ScanRecord {
-    id: string;
+    id?: string;
+    userId?: string;
     date: string;
     imageUrl: string;
     result: string;
@@ -8,32 +11,45 @@ export interface ScanRecord {
     isPest: boolean;
 }
 
-const STORAGE_KEY = 'kisaan_scan_history';
-
-export const saveScan = (record: Omit<ScanRecord, 'id' | 'date'>) => {
-    const history = getHistory();
-    const newRecord: ScanRecord = {
+export const saveScan = async (userId: string, record: Omit<ScanRecord, 'id' | 'date' | 'userId'>) => {
+    if (!userId) return;
+    const scansRef = collection(db, 'scans');
+    const newRecord = {
         ...record,
-        id: Date.now().toString(),
+        userId,
         date: new Date().toISOString(),
     };
+    await addDoc(scansRef, newRecord);
+};
 
-    // Prepend new record
-    const updatedHistory = [newRecord, ...history];
+export const getHistory = async (userId: string): Promise<ScanRecord[]> => {
+    if (!userId) return [];
+    try {
+        const scansRef = collection(db, 'scans');
+        const q = query(
+            scansRef,
+            where('userId', '==', userId),
+            orderBy('date', 'desc'),
+            limit(50)
+        );
+        const querySnapshot = await getDocs(q);
 
-    // Limit to last 50 records to save space
-    if (updatedHistory.length > 50) {
-        updatedHistory.pop();
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        })) as ScanRecord[];
+    } catch (error) {
+        console.error("Error getting history: ", error);
+        return [];
     }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
 };
 
-export const getHistory = (): ScanRecord[] => {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-};
+export const clearHistory = async (userId: string) => {
+    if (!userId) return;
+    const scansRef = collection(db, 'scans');
+    const q = query(scansRef, where('userId', '==', userId));
+    const querySnapshot = await getDocs(q);
 
-export const clearHistory = () => {
-    localStorage.removeItem(STORAGE_KEY);
+    const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
 };
