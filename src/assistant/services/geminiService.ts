@@ -1,12 +1,13 @@
 import { AGRI_SYSTEM_PROMPT, AgriWeatherInsights } from '../utils/agriculture';
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 // STEP 3: Runtime Validation Log
-console.log("Using REST API for Gemini Stability");
+console.log("Gemini API Layer initialized");
 
-if (!API_KEY) {
-    throw new Error("Missing Gemini API key in .env");
+if (IS_DEV && !API_KEY) {
+    console.warn("Missing Gemini API key in local .env - direct calls may fail");
 }
 
 // PROTECTION LAYER CONSTANTS
@@ -62,25 +63,39 @@ export async function generateAgriInsights(weatherData: any): Promise<AgriWeathe
 
     try {
         isRequestInProgress = true;
-        console.log("Calling Gemini API safely");
+        let result;
 
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
-            {
+        if (IS_DEV && API_KEY) {
+            console.log("Calling Gemini API directly (Local Dev)");
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                }
+            );
+
+            if (!response.ok) throw new Error("Local API Failed");
+            const data = await response.json();
+            const jsonText = data.candidates[0].content.parts[0].text;
+            result = JSON.parse(jsonText);
+        } else {
+            console.log("Calling Vercel Serverless API safely");
+            const response = await fetch('/api/gemini-insights', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: "application/json" }
-                })
-            }
-        );
+                body: JSON.stringify({ prompt })
+            });
 
-        if (!response.ok) throw new Error("API Failed");
-
-        const data = await response.json();
-        const jsonText = data.candidates[0].content.parts[0].text;
-        const result = JSON.parse(jsonText);
+            if (!response.ok) throw new Error("Serverless API Failed");
+            const data = await response.json();
+            const jsonText = data.candidates[0].content.parts[0].text;
+            result = JSON.parse(jsonText);
+        }
 
         // Update Cache and State
         lastAgriCallTime = Date.now();
@@ -140,33 +155,45 @@ Query: ${userInput}
 `;
 
     try {
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.7,
-                        maxOutputTokens: 4000
-                    }
-                })
-            }
-        );
+        let textResult;
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Gemini REST API Error:", errorData);
-            throw new Error(errorData.error?.message || "API Request Failed");
+        if (IS_DEV && API_KEY) {
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { temperature: 0.7, maxOutputTokens: 4000 }
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Gemini Local API Error:", errorData);
+                throw new Error(errorData.error?.message || "Local Request Failed");
+            }
+            const data = await response.json();
+            textResult = data.candidates[0].content.parts[0].text;
+        } else {
+            const response = await fetch('/api/gemini-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Gemini Vercel API Error:", errorData);
+                throw new Error(errorData.error || "Serverless Request Failed");
+            }
+            const data = await response.json();
+            textResult = data.candidates[0].content.parts[0].text;
         }
 
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
+        return textResult;
 
     } catch (error) {
         console.error("Gemini Service Error:", error);
