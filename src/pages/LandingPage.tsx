@@ -3,8 +3,8 @@ import Navbar from '../components/Navbar';
 import FeatureCard from '../components/ui/FeatureCard';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle, Shield, Smartphone } from 'lucide-react';
-import { ReactLenis } from '@studio-freight/react-lenis';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
+import { motion, useScroll, useTransform, useSpring, useAnimationFrame } from 'framer-motion';
 import { staggerContainer, slideInLeft, slideInRight } from '../utils/motion';
 
 // New Enterprise Components
@@ -87,8 +87,24 @@ const LandingPage: React.FC = () => {
     });
     const demoOpacity = useTransform(demoProgress, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
 
+    // Ultra-high performance frame sync (unbinds from React render cycle, binds to monitor Hz)
+    const lenis = useLenis();
+    useAnimationFrame((time) => {
+        lenis?.raf(time);
+    });
+
     return (
-        <ReactLenis root options={{ lerp: 0.08, duration: 1.4, smoothWheel: true }}>
+        <ReactLenis 
+            root 
+            autoRaf={false} // We handle the RequestAnimationFrame manually above for 120hz support
+            options={{ 
+                lerp: 0.04, 
+                wheelMultiplier: 0.9, 
+                smoothWheel: true, 
+                touchMultiplier: 1.5,
+                syncTouch: true, // Forces touch events to sync correctly with the layout thread
+            }}
+        >
             <div className="bg-surface-subtle dark:bg-slate-950 font-sans selection:bg-emerald-500 selection:text-white overflow-x-hidden min-h-screen transition-colors duration-300">
                 <Navbar />
 

@@ -113,13 +113,13 @@ const HeroSection: React.FC = () => {
                     </motion.div>
 
                     {/* Headline — each word group staggered */}
-                    <div className="mb-6 overflow-hidden">
+                    <div className="mb-8 overflow-hidden py-2">
                         <motion.h1
                             custom={0}
                             variants={textVariants}
                             initial="hidden"
                             animate="visible"
-                            className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1]"
+                            className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-none sm:leading-tight mb-2"
                         >
                             Grow the Future with
                         </motion.h1>
@@ -128,12 +128,12 @@ const HeroSection: React.FC = () => {
                             variants={textVariants}
                             initial="hidden"
                             animate="visible"
-                            className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]"
+                            className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none sm:leading-tight py-2"
                         >
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.1)] dark:drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]">
                                 {' '}AI-Powered
                             </span>{' '}
-                            <span className="text-slate-900 dark:text-white">Agriculture</span>
+                            <span className="text-slate-900 dark:text-white inline-block mt-2 sm:mt-0">Agriculture</span>
                         </motion.div>
                     </div>
 
