@@ -67,7 +67,7 @@ const ChatWindow: React.FC = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
                         onWheel={(e) => e.stopPropagation()}
-                        className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-[90vw] md:w-[400px] h-[600px] max-h-[80vh] bg-surface-light dark:bg-surface-dark backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-subtle dark:border-white/10 z-50 flex flex-col overflow-hidden"
+                        className="fixed bottom-20 right-4 left-4 sm:left-auto sm:right-6 md:bottom-10 md:right-10 sm:w-[380px] md:w-[400px] h-[70vh] sm:h-[600px] max-h-[75vh] sm:max-h-[80vh] bg-surface-light dark:bg-surface-dark backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-subtle dark:border-white/10 z-50 flex flex-col overflow-hidden"
                     >
                         {/* Header */}
                         <div className="bg-agri-dark text-white p-4 flex justify-between items-center shrink-0">

@@ -100,7 +100,7 @@ const WeatherWidget: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="group bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-[#0f172a]/90 dark:to-[#1e293b]/90 backdrop-blur-2xl text-white rounded-3xl p-6 shadow-2xl border border-emerald-400/30 dark:border-white/10 relative overflow-hidden h-full flex flex-col hover:border-emerald-400/50 dark:hover:border-white/20 transition-all duration-300"
+            className="group bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-[#0f172a]/90 dark:to-[#1e293b]/90 backdrop-blur-2xl text-white rounded-3xl p-4 sm:p-6 shadow-2xl border border-emerald-400/30 dark:border-white/10 relative overflow-hidden h-full flex flex-col hover:border-emerald-400/50 dark:hover:border-white/20 transition-all duration-300"
         >
             {/* Decorative Elements */}
             <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-white/20 dark:bg-agri-green/20 rounded-full blur-[60px] group-hover:bg-white/30 dark:group-hover:bg-agri-green/30 transition-all duration-500" />
@@ -137,7 +137,7 @@ const WeatherWidget: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-black/10 dark:bg-white/5 p-6 rounded-3xl border border-white/20 dark:border-white/10 backdrop-blur-sm shadow-inner group-hover:bg-black/20 dark:group-hover:bg-white/10 transition-colors duration-300 flex flex-col items-center min-w-[140px]">
+                <div className="bg-black/10 dark:bg-white/5 p-4 sm:p-6 rounded-3xl border border-white/20 dark:border-white/10 backdrop-blur-sm shadow-inner group-hover:bg-black/20 dark:group-hover:bg-white/10 transition-colors duration-300 flex flex-col items-center min-w-[100px] sm:min-w-[140px]">
                     {weather.description.includes('rain') ? <CloudRain size={56} className="text-blue-100 dark:text-blue-400 drop-shadow-xl" /> :
                         weather.description.includes('cloud') ? <Cloud size={56} className="text-white/80 dark:text-gray-400 drop-shadow-xl" /> :
                             <Sun size={56} className="text-yellow-200 dark:text-yellow-400 drop-shadow-xl animate-spin-slow" />}
@@ -148,18 +148,18 @@ const WeatherWidget: React.FC = () => {
             </div>
 
             {/* Farming Metrics Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
                 {[
                     { icon: Droplets, color: 'text-blue-100 dark:text-blue-400', bg: 'bg-blue-900/20 dark:bg-blue-500/20', label: 'Moisture', value: `${weather.humidity}%` },
                     { icon: Wind, color: 'text-emerald-50 dark:text-slate-300', bg: 'bg-black/10 dark:bg-slate-500/20', label: 'Wind', value: `${weather.windSpeed} km/h` },
                     { icon: Gauge, color: 'text-purple-100 dark:text-purple-300', bg: 'bg-purple-900/20 dark:bg-purple-500/20', label: 'Pressure', value: `${weather.pressure || 1012} hPa` },
                     { icon: Eye, color: 'text-yellow-100 dark:text-yellow-300', bg: 'bg-yellow-900/20 dark:bg-yellow-500/20', label: 'Visibility', value: `${((weather.visibility || 10000) / 1000).toFixed(1)} km` }
                 ].map((item, index) => (
-                    <div key={index} className="flex items-center gap-4 bg-black/5 dark:bg-white/5 p-4 rounded-2xl border border-white/10 dark:border-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] shadow-sm">
-                        <div className={`p-3 ${item.bg} rounded-xl shadow-inner`}><item.icon size={22} className={item.color} /></div>
-                        <div>
-                            <div className="text-xs md:text-sm text-emerald-100 dark:text-slate-400 uppercase tracking-wider font-bold mb-0.5">{item.label}</div>
-                            <div className="font-extrabold text-base md:text-lg text-white dark:text-slate-100">{item.value}</div>
+                    <div key={index} className="flex items-center gap-2 sm:gap-4 bg-black/5 dark:bg-white/5 p-3 sm:p-4 rounded-2xl border border-white/10 dark:border-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] shadow-sm">
+                        <div className={`p-2 sm:p-3 ${item.bg} rounded-xl shadow-inner`}><item.icon size={20} className={item.color} /></div>
+                        <div className="min-w-0">
+                            <div className="text-[10px] sm:text-xs md:text-sm text-emerald-100 dark:text-slate-400 uppercase tracking-wider font-bold mb-0.5 truncate">{item.label}</div>
+                            <div className="font-extrabold text-sm sm:text-base md:text-lg text-white dark:text-slate-100 truncate">{item.value}</div>
                         </div>
                     </div>
                 ))}

@@ -17,7 +17,16 @@ export const getRemedy = (
 ): RemedyResult | null => {
     // 1. Find the pest entry
     const key = Object.keys(remediesData).find(k => pestName.toLowerCase().includes(k));
-    if (!key) return null;
+    
+    // If exact pest isn't in our offline dictionary, return a universal broad-spectrum advisory
+    if (!key) {
+        return {
+            organic: "Broad-spectrum Neem Oil spray (5ml/L water). Apply generously.",
+            chemical: "Consult local agricultural extension for highly specific pesticide. Chlorpyrifos is commonly broad-spectrum but use caution.",
+            precaution: "Isolate affected crops if possible to prevent spreading while identifying specific treatment.",
+            weatherAdvisory: weather?.description.includes('rain') ? "Rain expected. Wait for dry weather before spraying." : undefined
+        };
+    }
 
     const pestData = (remediesData as any)[key];
     const defaultRemedy = pestData.default;

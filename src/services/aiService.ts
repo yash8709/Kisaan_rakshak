@@ -5,6 +5,7 @@ export interface PredictionResult {
     className: string;
     probability: number;
     isPest: boolean;
+    isInvalid?: boolean;
 }
 
 let model: mobilenet.MobileNet | null = null;
@@ -18,7 +19,23 @@ const PEST_KEYWORDS = [
 ];
 
 // Keywords indicating healthy plants/leaves to prevent false alarms
-const PLANT_KEYWORDS = ['plant', 'leaf', 'flower', 'tree', 'crop', 'vegetables', 'fruit', 'cabbage', 'lettuce', 'greenhouse', 'pot', 'daisy', 'grass'];
+const PLANT_KEYWORDS = [
+    'plant', 'leaf', 'flower', 'tree', 'crop', 'vegetables', 'fruit', 
+    'cabbage', 'lettuce', 'greenhouse', 'pot', 'daisy', 'grass', 'tomato',
+    'potato', 'corn', 'wheat', 'rice', 'strawberry', 'apple', 'orange', 
+    'lemon', 'banana', 'pepper', 'squash', 'cucumber', 'broccoli', 'cauliflower', 
+    'zucchini', 'mushroom', 'vine', 'garden', 'bean', 'pea', 'seed', 'root', 
+    'stem', 'pod', 'berry', 'melon', 'agriculture', 'farming', 'produce', 
+    'harvest', 'flora', 'potted', 'vase', 'fern', 'shrub', 'bush', 'herb', 
+    'weed', 'artichoke', 'fig', 'pineapple', 'pomegranate', 'acorn', 'soybean',
+    'eggplant', 'onion', 'garlic', 'carrot', 'radish', 'turnip', 'celery',
+    'spinach', 'kale', 'pumpkin', 'gourd', 'grape', 'cherry', 'peach', 'plum',
+    'apricot', 'pear', 'nut', 'almond', 'walnut', 'pecan', 'cotton', 'tobacco',
+    'sugarcane', 'coffee', 'tea', 'cocoa', 'mango', 'papaya', 'guava', 'avocado',
+    'olive', 'coconut', 'mint', 'basil', 'rosemary', 'thyme', 'oregano', 'sage',
+    'field', 'pasture', 'meadow', 'botanical', 'petunia', 'rose', 'sunflower',
+    'tulip', 'orchid', 'lily', 'iris', 'carnation', 'marigold', 'hibiscus'
+];
 
 export const loadModel = async (): Promise<mobilenet.MobileNet> => {
     if (model) return model;
@@ -74,11 +91,12 @@ export const detectPest = async (imageElement: HTMLImageElement): Promise<Predic
             };
         }
 
-        // 3. Unrecognized general object (e.g. human hands, random background)
+        // 3. Unrecognized general object (e.g. human hands, random background, non-crop items)
         return {
-            className: `Recognized: ${predictions[0].className.split(',')[0]} (No threats found)`,
+            className: "Invalid Image",
             probability: predictions[0].probability,
-            isPest: false
+            isPest: false,
+            isInvalid: true
         };
 
     } catch (error: any) {

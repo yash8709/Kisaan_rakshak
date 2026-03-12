@@ -67,16 +67,16 @@ const PestDetectionPage: React.FC = () => {
     const remedies = prediction?.isPest ? getRemedy(prediction.className, weather, cropStage) : null;
 
     return (
-        <div className="min-h-screen bg-surface-subtle dark:bg-surface-dark text-gray-800 dark:text-gray-100 transition-colors duration-300">
+        <div className="min-h-screen bg-surface-subtle dark:bg-surface-dark text-gray-800 dark:text-gray-100 transition-colors duration-300 overflow-x-hidden">
             <Navbar />
 
-            <main className="max-w-4xl mx-auto pt-28 pb-12 px-6">
+            <main className="max-w-4xl mx-auto pt-28 pb-12 px-2 sm:px-6">
                 <div className="bg-white dark:bg-surface-dark-subtle rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
                     {/* Header */}
-                    <div className="bg-green-700 dark:bg-green-900 py-8 px-8 text-center sm:text-left relative overflow-hidden">
+                    <div className="bg-green-700 dark:bg-green-900 py-6 px-4 sm:py-8 sm:px-8 text-center sm:text-left relative overflow-hidden">
                         <div className="relative z-10">
-                            <h2 className="text-3xl font-bold text-white mb-2">{t('nav.detect')}</h2>
-                            <p className="text-green-100 mb-6">{t('detect.upload_desc')}</p>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{t('nav.detect')}</h2>
+                            <p className="text-green-100 mb-6 text-sm sm:text-base">{t('detect.upload_desc')}</p>
 
                             {/* Weather Widget Integrated */}
                             <div className="w-full mt-8">
@@ -86,7 +86,7 @@ const PestDetectionPage: React.FC = () => {
                         {/* Decorative background elements if needed */}
                     </div>
 
-                    <div className="p-8">
+                    <div className="p-4 sm:p-8">
                         {/* Crop Stage Selector - NEW FEATURE */}
                         <div className="mb-8 flex items-center justify-center space-x-4 bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10">
                             <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Crop Stage:</span>
@@ -136,30 +136,57 @@ const PestDetectionPage: React.FC = () => {
                         {/* Results */}
                         {prediction && !loading && (
                             <div className="mt-10 animate-fade-in-up">
-                                <div className={`p-6 rounded-2xl border-l-8 shadow-sm ${prediction.isPest ? 'bg-red-50 border-red-500 dark:bg-red-900/10' : 'bg-green-50 border-green-500 dark:bg-green-900/10'}`}>
-                                    <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                                        <div className={`p-4 rounded-full ${prediction.isPest ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
-                                            {prediction.isPest ? <AlertTriangle size={48} /> : <CheckCircle size={48} />}
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className={`text-2xl font-bold mb-1 ${prediction.isPest ? 'text-red-700 dark:text-red-400' : 'text-green-800 dark:text-green-400'}`}>
-                                                {prediction.isPest ? t('detect.result_pest') : t('detect.result_healthy')}
-                                            </h3>
-                                            <p className="text-lg opacity-80 mb-2">
-                                                {prediction.isPest ? `Detected: ${prediction.className}` : 'No threats found.'}
-                                            </p>
-                                            <div className="inline-flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-1 rounded-full text-sm font-medium shadow-sm">
-                                                <span>{t('detect.confidence')}:</span>
-                                                <span className={`font-bold ${prediction.probability > 0.8 ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                                                    {(prediction.probability * 100).toFixed(1)}%
-                                                </span>
+                                {/* Render Results strictly based on validity */}
+                                {prediction.isInvalid ? (
+                                    <div className="p-6 rounded-2xl border-l-8 shadow-sm bg-yellow-50 border-yellow-500 dark:bg-yellow-900/10 dark:border-yellow-400">
+                                        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+                                            <div className="p-4 rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-900/40 dark:text-yellow-400">
+                                                <AlertTriangle size={48} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="text-2xl font-bold mb-2 text-yellow-800 dark:text-yellow-400">
+                                                    ⚠️ Invalid Image
+                                                </h3>
+                                                <p className="text-lg opacity-90 mb-4 text-yellow-800 dark:text-yellow-300 font-medium">
+                                                    The uploaded image does not appear to be a crop or plant leaf.
+                                                </p>
+                                                <div className="bg-white/60 dark:bg-black/20 p-4 rounded-xl text-sm font-medium text-yellow-900 dark:text-yellow-200">
+                                                    <p className="mb-2 font-bold opacity-80 uppercase tracking-wider text-xs">Please upload a clear image of:</p>
+                                                    <ul className="space-y-1 ml-1">
+                                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div> Crop leaf</li>
+                                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div> Plant stem</li>
+                                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div> Pest on crop</li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className={`p-6 rounded-2xl border-l-8 shadow-sm ${prediction.isPest ? 'bg-red-50 border-red-500 dark:bg-red-900/10' : 'bg-green-50 border-green-500 dark:bg-green-900/10'}`}>
+                                        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+                                            <div className={`p-4 rounded-full ${prediction.isPest ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                                {prediction.isPest ? <AlertTriangle size={48} /> : <CheckCircle size={48} />}
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className={`text-2xl font-bold mb-1 ${prediction.isPest ? 'text-red-700 dark:text-red-400' : 'text-green-800 dark:text-green-400'}`}>
+                                                    {prediction.isPest ? t('detect.result_pest') : t('detect.result_healthy')}
+                                                </h3>
+                                                <p className="text-lg opacity-80 mb-2">
+                                                    {prediction.isPest ? `Detected: ${prediction.className}` : 'No threats found.'}
+                                                </p>
+                                                <div className="inline-flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-1 rounded-full text-sm font-medium shadow-sm">
+                                                    <span>{t('detect.confidence')}:</span>
+                                                    <span className={`font-bold ${prediction.probability > 0.8 ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                                                        {(prediction.probability * 100).toFixed(1)}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Remedies Section (Enhanced) */}
-                                {prediction.isPest && remedies && (
+                                {prediction.isPest && !prediction.isInvalid && remedies && (
                                     <div className="mt-8 space-y-6">
 
                                         {/* Smart Advisory Banner */}
