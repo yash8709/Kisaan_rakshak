@@ -101,8 +101,8 @@ const LandingPage: React.FC = () => {
                 lerp: 0.04, 
                 wheelMultiplier: 0.9, 
                 smoothWheel: true, 
-                touchMultiplier: 1.5,
-                syncTouch: true, // Forces touch events to sync correctly with the layout thread
+                touchMultiplier: 1, // Resets swipe speed multiplier
+                syncTouch: false, // Disables custom touch tracking for stability
             }}
         >
             <div className="bg-surface-subtle dark:bg-slate-950 font-sans selection:bg-emerald-500 selection:text-white overflow-x-hidden min-h-screen transition-colors duration-300">

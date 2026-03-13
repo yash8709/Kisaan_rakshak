@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 interface ParallaxContainerProps {
@@ -9,6 +9,18 @@ interface ParallaxContainerProps {
 
 const ParallaxContainer: React.FC<ParallaxContainerProps> = ({ children, speed = 0.5, className = "" }) => {
     const ref = useRef<HTMLDivElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        // Check once on mount
+        checkMobile();
+        
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -23,7 +35,8 @@ const ParallaxContainer: React.FC<ParallaxContainerProps> = ({ children, speed =
     });
 
     // Map the scroll progress to a physical Y translation
-    const yRange = useTransform(springProgress, [0, 1], [`-${speed * 100}px`, `${speed * 100}px`]);
+    const activeSpeed = isMobile ? 0 : speed;
+    const yRange = useTransform(springProgress, [0, 1], [`-${activeSpeed * 100}px`, `${activeSpeed * 100}px`]);
 
     return (
         <div ref={ref} className={`relative overflow-hidden ${className}`}>
